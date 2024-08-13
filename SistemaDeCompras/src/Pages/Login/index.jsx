@@ -54,8 +54,8 @@ const Login = (props) => {
     event.preventDefault(); 
     // Simulação de autenticação: verifica se os campos não estão vazios
     if (email && password) {
-      props.setIsAuthenticated(true);
-      navigate("/");
+      props.setIsAuthenticated(true);  // Atualiza o estado de autenticação no App
+      navigate("/");  // Redireciona para a página inicial
     } else {
       setAlerta({
         severidade: "error",
@@ -66,66 +66,63 @@ const Login = (props) => {
   };
 
   return (
+    <StyledContainer breakpoints={props.breakpoints}>
+      <StyledForm
+        breakpoints={props.breakpoints}
+        component="form"
+        noValidate
+        autoComplete="off"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        onSubmit={handleLogin}
+      >
+        <Typography variant="h5" component="div" gutterBottom>
+          {props.LogoTitle}
+        </Typography>
 
-      <StyledContainer breakpoints={props.breakpoints}>
+        {alerta && (
+          <AlertMessage 
+            severidade={alerta.severidade} 
+            titulo={alerta.titulo} 
+            mensagem={alerta.mensagem} 
+            aoFechar={() => setAlerta(null)}
+          />
+        )}
+
+        <TextField
+          label="Email"
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          label="Senha"
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
         
-        <StyledForm
-          breakpoints={props.breakpoints}
-          component="form"
-          noValidate
-          autoComplete="off"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          onSubmit={handleLogin}
+        <LembrarMeCheck rememberMe={rememberMe} setRememberMe={setRememberMe} /> 
+        
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+          fullWidth
+          type="submit"
         >
-
-          <Typography variant="h5" component="div" gutterBottom>
-            {props.LogoTitle}
-          </Typography>
-
-          {alerta && (
-            <AlertMessage 
-              severidade={alerta.severidade} 
-              titulo={alerta.titulo} 
-              mensagem={alerta.mensagem} 
-              aoFechar={() => setAlerta(null)}
-            />
-          )}
-
-          <TextField
-            label="Email"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            label="Senha"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          
-          <LembrarMeCheck rememberMe={rememberMe} setRememberMe={setRememberMe} /> 
-          
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ mt: 2 }}
-            fullWidth
-            type="submit"
-          >
-            Entrar
-          </Button>
-          
-        </StyledForm>
-      </StyledContainer>
+          Entrar
+        </Button>
+        
+      </StyledForm>
+    </StyledContainer>
   );
 };
 

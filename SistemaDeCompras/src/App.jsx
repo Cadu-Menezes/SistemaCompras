@@ -11,9 +11,9 @@ import FakeContatos from './Utils/fakeContato';
 import addContato from '../src/Utils/cadastroContato';
 import FakeCotacoes from './Utils/fakeCotacao';
 import addCotacao from '../src/Utils/cadastroCotacoes';
+import Login from './Pages/Login'; // Importando o componente Login
 
 const Home = lazy(() => import('./Pages/Home'));
-const Login = lazy(() => import('./Pages/Login'));
 const ListProdutos = lazy(() => import('./Pages/Produtos/list'));
 const FormProdutos = lazy(() => import('./Pages/Produtos/form'));
 const ListFornecedor = lazy(() => import('./Pages/Fornecedor/listFornecedor'));
@@ -23,87 +23,53 @@ const FormContato = lazy(() => import('./Pages/Contato/formContato'));
 const ListCotacao = lazy(() => import('./Pages/Cotacao/listCotacao'));
 const FormCotacoes = lazy(() => import('./Pages/Cotacao/formCotacao'));
 
-
 const breakpoints = {
   small: "576px"
 };
 
 function App() {
-  
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  const [products, setProducts] = useState();
-  useEffect(() => {
-    FakeProdutos(setProducts, products);
-  }, [products]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Estado para controle de autenticação
 
-  const [fornecedores, setFornecedores] = useState();
-  useEffect(() => {
-    FakeFornecedores(setFornecedores, fornecedores);
-  }, [fornecedores]);
+  const [products, setProducts] = useState([]);
+  const [fornecedores, setFornecedores] = useState([]);
+  const [contatos, setContatos] = useState([]);
+  const [cotacoes, setCotacoes] = useState([]);
 
-  const [contatos, setContatos] = useState();
   useEffect(() => {
-    FakeContatos(setContatos, contatos);
-  }, [contatos]);
-
-  const [cotacoes, setCotacoes] = useState();
-  useEffect(() => {
-    FakeCotacoes(setCotacoes, cotacoes);
-  }, [cotacoes]);
+    FakeProdutos(setProducts);
+    FakeFornecedores(setFornecedores);
+    FakeContatos(setContatos);
+    FakeCotacoes(setCotacoes);
+  }, []);
 
   return (
     <NativeBaseProvider>
       <Router>
-        <NavBar breakpoints={breakpoints} LogoTitle={"Caduzin"} />
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route 
-              path='/login' 
-              element={<Login breakpoints={breakpoints} LogoTitle="Kduzin" setIsAuthenticated={setIsAuthenticated} />} 
-            />
-            <Route 
-              path='/' 
-              element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />} 
-            />
-            <Route 
-              path='/produtos' 
-              element={isAuthenticated ? <ListProdutos products={products} /> : <Navigate to="/login" replace />} 
-            />
-            <Route 
-              path='/produtos/cadastrar' 
-              element={isAuthenticated ? <FormProdutos addProduto={(product) => addProduto(setProducts, product)} /> : <Navigate to="/login" replace />} 
-            />
-
-            <Route 
-              path='/fornecedores' 
-              element={isAuthenticated ? <ListFornecedor fornecedores={fornecedores} /> : <Navigate to="/login" replace />} 
-            />
-            <Route 
-              path='/fornecedores/cadastrar' 
-              element={isAuthenticated ? <FormFornecedores addFornecedor={(fornecedor) => addFornecedor(setFornecedores, fornecedor)} /> : <Navigate to="/login" replace />} 
-            />
-
-            <Route 
-              path='/contatos' 
-              element={isAuthenticated ? <ListContato contatos={contatos} /> : <Navigate to="/login" replace />} 
-            />
-            <Route 
-              path='/contatos/cadastrar' 
-              element={isAuthenticated ? <FormContato addContato={(contato) => addContato(setContatos, contato)} /> : <Navigate to="/login" replace />} 
-            />
-
-            <Route 
-              path='/cotacao' 
-              element={isAuthenticated ? <ListCotacao cotacoes={cotacoes} /> : <Navigate to="/login" replace />} 
-            />
-            <Route 
-              path='/cotacao/cadastrar' 
-              element={isAuthenticated ? <FormCotacoes addCotacao={(cotacao) => addCotacao(setCotacoes, cotacao)} /> : <Navigate to="/login" replace />} 
-            />
-
-          </Routes>
-        </Suspense>
+        {/* Se não estiver autenticado, renderiza o componente de Login */}
+        {!isAuthenticated ? (
+          <Login 
+            breakpoints={breakpoints} 
+            LogoTitle="Kduzin" 
+            setIsAuthenticated={setIsAuthenticated} 
+          />
+        ) : (
+          <>
+            <NavBar breakpoints={breakpoints} LogoTitle={"Caduzin"} />
+            <Suspense fallback={<Loading />}>
+              <Routes>
+                <Route path='/produtos' element={<ListProdutos products={products} />} />
+                <Route path='/produtos/cadastrar' element={<FormProdutos addProduto={(product) => addProduto(setProducts, product)} />} />
+                <Route path='/fornecedores' element={<ListFornecedor fornecedores={fornecedores} />} />
+                <Route path='/fornecedores/cadastrar' element={<FormFornecedores addFornecedor={(fornecedor) => addFornecedor(setFornecedores, fornecedor)} />} />
+                <Route path='/contatos' element={<ListContato contatos={contatos} />} />
+                <Route path='/contatos/cadastrar' element={<FormContato addContato={(contato) => addContato(setContatos, contato)} />} />
+                <Route path='/cotacao' element={<ListCotacao cotacoes={cotacoes} />} />
+                <Route path='/cotacao/cadastrar' element={<FormCotacoes addCotacao={(cotacao) => addCotacao(setCotacoes, cotacao)} />} />
+                <Route path='/' element={<Home />} />
+              </Routes>
+            </Suspense>
+          </>
+        )}
       </Router>
     </NativeBaseProvider>
   );
