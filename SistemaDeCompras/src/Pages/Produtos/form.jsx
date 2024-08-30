@@ -33,17 +33,17 @@ const StyledButtons = styled.div`
 `;
 
 const FormProdutos = ({ refreshProducts }) => {
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
+  const [Nome, setName] = useState('');
+  const [Preco, setPrice] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     console.log('Clicou submit');
-    console.log('name: ',name);
-    console.log('price: ', price);
+    console.log('Nome: ',Nome);
+    console.log('Preco: ', Preco);
     event.preventDefault();
-    if (name && price) {
-      await addProdutoToFirebase({ name, price: parseFloat(price) });
+    if (Nome && Preco) {
+      await addProdutoToFirebase({ Nome, Preco: parseFloat(Preco) });
       if (refreshProducts) {
         await refreshProducts();
       }
@@ -65,7 +65,7 @@ const FormProdutos = ({ refreshProducts }) => {
           variant="outlined"
           margin="normal"
           fullWidth
-          value={name}
+          value={Nome}
           onChange={(e) => setName(e.target.value)}
         />
         <TextField
@@ -74,7 +74,7 @@ const FormProdutos = ({ refreshProducts }) => {
           margin="normal"
           fullWidth
           type="number"
-          value={price}
+          value={Preco}
           onChange={(e) => setPrice(e.target.value)}
         />
         <StyledButtons>

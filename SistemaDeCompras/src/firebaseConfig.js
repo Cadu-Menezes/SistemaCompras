@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCqo8XzzmFnpHxPb8hsR1eJIbmiR7SFloo",
-  authDomain: "sistemadecompras-93b1d.firebaseapp.com",
-  projectId: "sistemadecompras-93b1d",
-  storageBucket: "sistemadecompras-93b1d.appspot.com",
-  messagingSenderId: "490328377319",
-  appId: "1:490328377319:web:80e0ea9f4932a173f99f42",
-  measurementId: "G-22L14LBBWD"
+  apiKey: "AIzaSyCIiTHAhRx8KWtw4qOijjXiohWQIuLrCOc",
+  authDomain: "sistemadecompras-f362f.firebaseapp.com",
+  projectId: "sistemadecompras-f362f",
+  storageBucket: "sistemadecompras-f362f.appspot.com",
+  messagingSenderId: "873184738188",
+  appId: "1:873184738188:web:19f3f543cfae54d02e74a9",
+  measurementId: "G-E94N0SBTZS"
 };
 
 const app = initializeApp(firebaseConfig);
