@@ -8,6 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AlertMessage from '../../Components/AlertMessage';
 import LembrarMeCheck from '../../Components/CheckBox';
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+import { auth } from '../../firebaseConfig'; 
+
 
 const StyledContainer = styled.div`
   background-color: #C2C2C2;
@@ -43,6 +47,7 @@ const StyledForm = styled(Box)`
   }
 `;
 
+
 const Login = (props) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -50,17 +55,19 @@ const Login = (props) => {
   const [rememberMe, setRememberMe] = useState(false); 
   const [alerta, setAlerta] = useState(null);
 
-  const handleLogin = (event) => {
-    event.preventDefault(); 
-    // Simulação de autenticação: verifica se os campos não estão vazios
-    if (email && password) {
-      props.setIsAuthenticated(true);  // Atualiza o estado de autenticação no App
-      navigate("/");  // Redireciona para a página inicial
-    } else {
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Usuário logado:', userCredential.user);
+      props.setIsAuthenticated(true);  
+      navigate("/");  
+    } catch (error) {
+      console.error('Erro de autenticação:', error);
       setAlerta({
         severidade: "error",
         titulo: "Erro de autenticação",
-        mensagem: "Por favor, preencha os campos de email e senha."
+        mensagem: error.message 
       });
     }
   };
@@ -127,3 +134,6 @@ const Login = (props) => {
 };
 
 export default Login;
+
+
+

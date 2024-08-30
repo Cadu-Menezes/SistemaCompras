@@ -9,7 +9,7 @@ const FakeCotacoes = (setCotacoes, cotacao) => {
       produto: faker.commerce.product(),
     }));
 
-    console.log("ListCotacoes: ", ListCotacoes)
+
     setCotacoes(ListCotacoes);
   }
 };

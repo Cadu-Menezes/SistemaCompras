@@ -9,7 +9,7 @@ const FakeContatos = (setContato, contato) => {
       fornecedor: faker.person.jobType(),
     }));
 
-    console.log("ListContatos: ", ListContatos)
+
     setContato(ListContatos);
   }
 };

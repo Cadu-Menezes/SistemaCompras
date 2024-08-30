@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Loading from './Components/Loading';
 import NavBar from './Components/NavBar';
 import FakeProdutos from '../src/Utils/fake';
-import addProduto from '../src/Utils/cadastro';
+import {addProdutoToFirebase} from './Utils/cadastroProdutos';
 import FakeFornecedores from '../src/Utils/fakeFornecedor';
 import addFornecedor from '../src/Utils/cadastroFornecedor';
 import FakeContatos from './Utils/fakeContato';
 import addContato from '../src/Utils/cadastroContato';
 import FakeCotacoes from './Utils/fakeCotacao';
 import addCotacao from '../src/Utils/cadastroCotacoes';
-import Login from './Pages/Login'; // Importando o componente Login
+import Login from './Pages/Login'; 
 
 const Home = lazy(() => import('./Pages/Home'));
 const ListProdutos = lazy(() => import('./Pages/Produtos/list'));
@@ -58,7 +58,7 @@ function App() {
             <Suspense fallback={<Loading />}>
               <Routes>
                 <Route path='/produtos' element={<ListProdutos products={products} />} />
-                <Route path='/produtos/cadastrar' element={<FormProdutos addProduto={(product) => addProduto(setProducts, product)} />} />
+                <Route path='/produtos/cadastrar' element={<FormProdutos addProdutoToFirebase={(product) => addProdutoToFirebase(setProducts, product)} />} />
                 <Route path='/fornecedores' element={<ListFornecedor fornecedores={fornecedores} />} />
                 <Route path='/fornecedores/cadastrar' element={<FormFornecedores addFornecedor={(fornecedor) => addFornecedor(setFornecedores, fornecedor)} />} />
                 <Route path='/contatos' element={<ListContato contatos={contatos} />} />

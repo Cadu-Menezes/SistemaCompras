@@ -8,7 +8,7 @@ const FakeFornecedores = (setFornecedor, fornecedor) => {
       tipo: faker.person.jobType(),
     }));
 
-    console.log("ListFornecedores: ", ListFornecedores)
+
     setFornecedor(ListFornecedores);
   }
 };

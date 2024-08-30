@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { TextField, Button, Container, Typography } from '@mui/material';
+import { TextField, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { addProdutoToFirebase } from '../../Utils/cadastroProdutos'; // Verifique o caminho
 
 const FormContainer = styled.div`
   margin-left: 30%;
@@ -21,7 +22,6 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-
 `;
 
 const StyledButtons = styled.div`
@@ -29,38 +29,37 @@ const StyledButtons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  ${'' /* background-color: blue; */}
   width: 100%;
-  
 `;
 
-
-const FormProdutos = ({ addProduto }) => {
+const FormProdutos = ({ refreshProducts }) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
+    console.log('Clicou submit');
+    console.log('name: ',name);
+    console.log('price: ', price);
     event.preventDefault();
     if (name && price) {
-      addProduto({ name, price: parseFloat(price) });
+      await addProdutoToFirebase({ name, price: parseFloat(price) });
+      if (refreshProducts) {
+        await refreshProducts();
+      }
       navigate('/produtos');
     }
   };
 
   const handleError = (event) => {
     event.preventDefault();
-      navigate('/produtos');
+    navigate('/produtos');
   };
 
   return (
-
     <FormContainer>
-      
       <Typography variant="h4">Cadastrar Produto</Typography>
-      
       <Form onSubmit={handleSubmit}>
-        
         <TextField
           label="Nome"
           variant="outlined"
@@ -69,7 +68,6 @@ const FormProdutos = ({ addProduto }) => {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-
         <TextField
           label="Preço"
           variant="outlined"
@@ -79,19 +77,14 @@ const FormProdutos = ({ addProduto }) => {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
         />
-
         <StyledButtons>
-          
           <Button variant="contained" color="primary" type="submit">
             Cadastrar
           </Button>
-
-          <Button variant="contained" color="error" type="submit" onClick={handleError}>
+          <Button variant="contained" color="error" onClick={handleError}>
             Fechar
           </Button>
-
         </StyledButtons>
-
       </Form>
     </FormContainer>
   );
