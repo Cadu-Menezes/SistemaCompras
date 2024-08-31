@@ -3,12 +3,10 @@ import { NativeBaseProvider } from 'native-base';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Loading from './Components/Loading';
 import NavBar from './Components/NavBar';
-import FakeProdutos from '../src/Utils/fake';
 import { addProdutoToFirebase } from './Utils/cadastroProdutos';
-import FakeFornecedores from '../src/Utils/fakeFornecedor';
 import { addFornecedorToFirebase } from './Utils/fornecedoresService';
-import FakeContatos from './Utils/fakeContato';
-import addContato from '../src/Utils/cadastroContato';
+import { addContatoToFirebase } from './Utils/contatosService';
+
 import FakeCotacoes from './Utils/fakeCotacao';
 import addCotacao from '../src/Utils/cadastroCotacoes';
 import Login from './Pages/Login'; 
@@ -36,7 +34,7 @@ function App() {
   const [cotacoes, setCotacoes] = useState([]);
 
   useEffect(() => {
-    FakeContatos(setContatos);
+
     FakeCotacoes(setCotacoes);
   }, []);
 
@@ -53,7 +51,6 @@ function App() {
         ) : (
           <>
             <NavBar breakpoints={breakpoints} LogoTitle={"Caduzin"} />
-            <div style={{ marginTop: '60px' }}>
               <Suspense fallback={<Loading />}>
                 <Routes>
                   {/* Rotas para Produtos */}
@@ -67,8 +64,9 @@ function App() {
                   <Route path='/fornecedores/editar/:id' element={<FormFornecedores />} />
 
                   {/* Rotas para Contatos */}
-                  <Route path='/contatos' element={<ListContato contatos={contatos} />} />
-                  <Route path='/contatos/cadastrar' element={<FormContato addContato={(contato) => addContato(setContatos, contato)} />} />
+                  <Route path='/contatos' element={<ListContato />} />
+                  <Route path='/contatos/cadastrar' element={<FormContato addContatoToFirebase={(contato) => addContatoToFirebase(contato)} />} />
+                  <Route path='/contatos/editar/:id' element={<FormContato />} />
 
                   {/* Rotas para Cotações */}
                   <Route path='/cotacao' element={<ListCotacao cotacoes={cotacoes} />} />
@@ -78,8 +76,6 @@ function App() {
                   <Route path='/' element={<Home />} />
                 </Routes>
               </Suspense>
-            </div>
-
           </>
         )}
       </Router>

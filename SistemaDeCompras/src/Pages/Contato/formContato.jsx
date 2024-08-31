@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { TextField, Button, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { addContatoToFirebase, updateContatoInFirebase, getContatosFromFirebase } from '../../Utils/contatosService';
+import { getFornecedoresFromFirebase } from '../../Utils/fornecedoresService';
+
 
 const FormContainer = styled.div`
   margin-left: 30%;
@@ -21,7 +24,6 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-
 `;
 
 const StyledButtons = styled.div`
@@ -29,83 +31,109 @@ const StyledButtons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
-  ${'' /* background-color: blue; */}
   width: 100%;
-  
 `;
 
-
-const FormContato = ({ addContato }) => {
-  
-  const [name, setName] = useState('');
+const FormContatos = ({ refreshContatos }) => {
+  const [nome, setNome] = useState('');
   const [numero, setNumero] = useState('');
   const [fornecedor, setFornecedor] = useState('');
-
+  const [fornecedores, setFornecedores] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  useEffect(() => {
+    const fetchContato = async () => {
+      if (id) {
+        const contatos = await getContatosFromFirebase();
+        const contatoToEdit = contatos.find(contato => contato.id === id);
+        if (contatoToEdit) {
+          setNome(contatoToEdit.nome || '');
+          setNumero(contatoToEdit.numero || '');
+          setFornecedor(contatoToEdit.fornecedor || '');
+          setIsEditing(true);
+        }
+      }
+    };
+
+    const fetchFornecedores = async () => {
+      const fornecedoresData = await getFornecedoresFromFirebase();
+      setFornecedores(fornecedoresData);
+    };
+
+    fetchContato();
+    fetchFornecedores();
+  }, [id]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (name && numero && fornecedor) {
-      addContato({ name, numero, fornecedor });
+    if (nome && numero && fornecedor) {
+      const contatoData = { nome, numero, fornecedor };
+      if (isEditing) {
+        await updateContatoInFirebase(id, contatoData);
+      } else {
+        await addContatoToFirebase(contatoData);
+      }
+      if (refreshContatos) {
+        await refreshContatos();
+      }
       navigate('/contatos');
     }
   };
 
   const handleError = (event) => {
     event.preventDefault();
-      navigate('/contatos');
+    navigate('/contatos');
   };
 
   return (
-
     <FormContainer>
-      
-      <Typography variant="h4">Cadastrar Contato</Typography>
-      
+      <Typography variant="h4">{isEditing ? 'Editar Contato' : 'Cadastrar Contato'}</Typography>
       <Form onSubmit={handleSubmit}>
-        
         <TextField
           label="Nome"
           variant="outlined"
           margin="normal"
           fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
         />
-
         <TextField
-          label="numero"
+          label="Número"
           variant="outlined"
           margin="normal"
           fullWidth
           value={numero}
           onChange={(e) => setNumero(e.target.value)}
         />
-
         <TextField
-          label="fornecedor"
           variant="outlined"
           margin="normal"
           fullWidth
+          select
           value={fornecedor}
           onChange={(e) => setFornecedor(e.target.value)}
-        />
-
+          SelectProps={{
+            native: true,
+          }}
+        >
+          <option value="">Selecione um fornecedor</option>
+          {fornecedores.map((fornecedor) => (
+            <option key={fornecedor.id} value={fornecedor.Nome}>{fornecedor.Nome}</option>
+          ))}
+        </TextField>
         <StyledButtons>
-          
           <Button variant="contained" color="primary" type="submit">
-            Cadastrar
+            {isEditing ? 'Atualizar' : 'Cadastrar'}
           </Button>
-
-          <Button variant="contained" color="error" type="submit" onClick={handleError}>
+          <Button variant="contained" color="error" onClick={handleError}>
             Fechar
           </Button>
-
         </StyledButtons>
-
       </Form>
     </FormContainer>
   );
 };
 
-export default FormContato;
+export default FormContatos;

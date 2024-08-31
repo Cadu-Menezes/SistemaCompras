@@ -75,7 +75,7 @@ const ListFornecedores = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
+                    color="secondary"
                     onClick={() => handleEditFornecedor(fornecedor.id)}
                     style={{ marginRight: '0.5rem' }}
                   >
@@ -83,7 +83,7 @@ const ListFornecedores = () => {
                   </Button>
                   <Button
                     variant="contained"
-                    color="secondary"
+                    color="error"
                     onClick={() => handleDeleteFornecedor(fornecedor.id)}
                   >
                     Excluir
