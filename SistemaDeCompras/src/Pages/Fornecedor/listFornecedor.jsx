@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { getFornecedoresFromFirebase, deleteFornecedorFromFirebase } from '../../Utils/fornecedoresService';
+import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 
 const StyledContainer = styled('div')({
   padding: '2rem',
@@ -10,9 +11,7 @@ const StyledContainer = styled('div')({
   alignItems: 'center',
 });
 
-const Titulo = styled('h1')({
-
-});
+const Titulo = styled('h1')({});
 
 const StyledTableContainer = styled(TableContainer)({
   marginTop: '2rem',
@@ -20,39 +19,76 @@ const StyledTableContainer = styled(TableContainer)({
   maxWidth: '800px',
 });
 
-const ListFornecedor = ({ fornecedores }) => {
-  
-  console.log("fornecedores: ",fornecedores)
-
+const ListFornecedores = () => {
+  const [fornecedores, setFornecedores] = useState([]);
   const navigate = useNavigate();
 
+  const fetchFornecedores = async () => {
+    console.log('Buscando fornecedores...');
+    const fornecedores = await getFornecedoresFromFirebase();
+    console.log('Fornecedores obtidos:', fornecedores);
+    setFornecedores(fornecedores);
+  };
+
+  useEffect(() => {
+    fetchFornecedores();
+  }, []);
+
+  const handleEditFornecedor = (id) => {
+    navigate(`/fornecedores/editar/${id}`);
+  };
+
+  const handleDeleteFornecedor = async (id) => {
+    await deleteFornecedorFromFirebase(id);
+    fetchFornecedores(); // Atualiza a lista após a exclusão
+  };
+
+  const handleAddFornecedor = () => {
+    navigate('/fornecedores/cadastrar');
+  };
+
   return (
-    
     <StyledContainer>
-
       <Titulo>Cadastro de Fornecedores</Titulo>
-
       <Box display="flex" justifyContent="flex-end" width="100%" maxWidth="800px">
-        <Button variant="contained" color="primary" onClick={() => navigate('/fornecedores/cadastrar')}>
+        <Button variant="contained" color="primary" onClick={handleAddFornecedor}>
           Cadastrar
         </Button>
       </Box>
-      
+
       <StyledTableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
               <TableCell>Nome</TableCell>
-              <TableCell>Tipo</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>CEP</TableCell>
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {fornecedores.map((fornecedor) => (
               <TableRow key={fornecedor.id}>
-                <TableCell>{fornecedor.id}</TableCell>
-                <TableCell>{fornecedor.name}</TableCell>
-                <TableCell>{fornecedor.tipo}</TableCell>
+                <TableCell>{fornecedor.Nome}</TableCell>
+                <TableCell>{fornecedor.Email}</TableCell>
+                <TableCell>{fornecedor.CEP}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEditFornecedor(fornecedor.id)}
+                    style={{ marginRight: '0.5rem' }}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDeleteFornecedor(fornecedor.id)}
+                  >
+                    Excluir
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -62,4 +98,4 @@ const ListFornecedor = ({ fornecedores }) => {
   );
 };
 
-export default ListFornecedor;
+export default ListFornecedores;

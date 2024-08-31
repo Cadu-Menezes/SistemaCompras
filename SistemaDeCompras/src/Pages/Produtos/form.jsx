@@ -5,15 +5,14 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { addProdutoToFirebase, updateProdutoInFirebase, getProdutosFromFirebase } from '../../Utils/cadastroProdutos';
 
 const FormContainer = styled.div`
-  margin-left: 30%;
-  width: 40%;
-  align-items: center;
-  margin-top: 2rem;
-  height: 60vh;
-  align-items: center;
+  margin: 2rem auto; 
+  width: 80%; 
+  max-width: 600px; 
+  padding-top: 60px; 
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 60px); 
 `;
 
 const Form = styled.form`
@@ -33,8 +32,9 @@ const StyledButtons = styled.div`
 `;
 
 const FormProdutos = ({ refreshProducts }) => {
+
   const navigate = useNavigate();
-  const { id } = useParams();  // Pegue o id da URL
+  const { id } = useParams();  //id da URL
   const [Nome, setName] = useState('');
   const [Preco, setPrice] = useState('');
 
