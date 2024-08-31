@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, deleteDoc, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 export const addProdutoToFirebase = async (product) => {
@@ -24,4 +24,33 @@ export const getProdutosFromFirebase = async () => {
     console.error("Erro ao obter produtos: ", e);
     return [];
   }
+};
+
+export const updateProdutoInFirebase = async (id, updatedProduct) => {
+  try {
+    const productRef = doc(db, "Produtos", id);
+    await updateDoc(productRef, updatedProduct);
+    console.log("Produto atualizado com ID: ", id);
+  } catch (e) {
+    console.error("Erro ao atualizar produto: ", e);
+  }
+};
+
+export const deleteProdutoFromFirebase = async (id) => {
+  try {
+    
+    console.log("Deletando produto com ID: ", id);
+
+    const productRef = doc(db, "Produtos", id);
+    
+    await deleteDoc(productRef);
+    
+    console.log("Produto deletado com ID: ", id);
+  
+  } catch (e) {
+   
+    console.error("Erro ao deletar produto: ", e);
+  
+  }
+
 };

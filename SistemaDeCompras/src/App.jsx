@@ -36,7 +36,6 @@ function App() {
   const [cotacoes, setCotacoes] = useState([]);
 
   useEffect(() => {
-    FakeProdutos(setProducts);
     FakeFornecedores(setFornecedores);
     FakeContatos(setContatos);
     FakeCotacoes(setCotacoes);
@@ -54,20 +53,31 @@ function App() {
           />
         ) : (
           <>
+            
             <NavBar breakpoints={breakpoints} LogoTitle={"Caduzin"} />
+            
             <Suspense fallback={<Loading />}>
               <Routes>
+                
                 <Route path='/produtos' element={<ListProdutos products={products} />} />
                 <Route path='/produtos/cadastrar' element={<FormProdutos addProdutoToFirebase={(product) => addProdutoToFirebase(setProducts, product)} />} />
+                <Route path='/produtos/editar/:id' element={<FormProdutos />} />  {/* Adicione esta linha */}
+                
                 <Route path='/fornecedores' element={<ListFornecedor fornecedores={fornecedores} />} />
                 <Route path='/fornecedores/cadastrar' element={<FormFornecedores addFornecedor={(fornecedor) => addFornecedor(setFornecedores, fornecedor)} />} />
+                
                 <Route path='/contatos' element={<ListContato contatos={contatos} />} />
                 <Route path='/contatos/cadastrar' element={<FormContato addContato={(contato) => addContato(setContatos, contato)} />} />
+                
                 <Route path='/cotacao' element={<ListCotacao cotacoes={cotacoes} />} />
                 <Route path='/cotacao/cadastrar' element={<FormCotacoes addCotacao={(cotacao) => addCotacao(setCotacoes, cotacao)} />} />
+                
                 <Route path='/' element={<Home />} />
+                
               </Routes>
+
             </Suspense>
+
           </>
         )}
       </Router>

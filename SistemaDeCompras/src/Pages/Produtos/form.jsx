@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { TextField, Button, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { addProdutoToFirebase } from '../../Utils/cadastroProdutos'; // Verifique o caminho
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { addProdutoToFirebase, updateProdutoInFirebase, getProdutosFromFirebase } from '../../Utils/cadastroProdutos';
 
 const FormContainer = styled.div`
   margin-left: 30%;
@@ -33,17 +33,33 @@ const StyledButtons = styled.div`
 `;
 
 const FormProdutos = ({ refreshProducts }) => {
+  const navigate = useNavigate();
+  const { id } = useParams();  // Pegue o id da URL
   const [Nome, setName] = useState('');
   const [Preco, setPrice] = useState('');
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (id) {
+        const produtos = await getProdutosFromFirebase();
+        const productToEdit = produtos.find(product => product.id === id);
+        if (productToEdit) {
+          setName(productToEdit.Nome);
+          setPrice(productToEdit.Preco);
+        }
+      }
+    };
+    fetchProduct();
+  }, [id]);
 
   const handleSubmit = async (event) => {
-    console.log('Clicou submit');
-    console.log('Nome: ',Nome);
-    console.log('Preco: ', Preco);
     event.preventDefault();
     if (Nome && Preco) {
-      await addProdutoToFirebase({ Nome, Preco: parseFloat(Preco) });
+      if (id) {
+        await updateProdutoInFirebase(id, { Nome, Preco: parseFloat(Preco) });
+      } else {
+        await addProdutoToFirebase({ Nome, Preco: parseFloat(Preco) });
+      }
       if (refreshProducts) {
         await refreshProducts();
       }
@@ -58,7 +74,7 @@ const FormProdutos = ({ refreshProducts }) => {
 
   return (
     <FormContainer>
-      <Typography variant="h4">Cadastrar Produto</Typography>
+      <Typography variant="h4">{id ? 'Editar Produto' : 'Cadastrar Produto'}</Typography>
       <Form onSubmit={handleSubmit}>
         <TextField
           label="Nome"
@@ -79,7 +95,7 @@ const FormProdutos = ({ refreshProducts }) => {
         />
         <StyledButtons>
           <Button variant="contained" color="primary" type="submit">
-            Cadastrar
+            {id ? 'Atualizar' : 'Cadastrar'}
           </Button>
           <Button variant="contained" color="error" onClick={handleError}>
             Fechar
