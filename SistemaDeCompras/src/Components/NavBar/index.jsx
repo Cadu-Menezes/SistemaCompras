@@ -64,6 +64,7 @@ const NavBar = (props) => {
                 <MenuItem><Link style={{...linkDefault}} to="/fornecedores">Fornecedores</Link></MenuItem>
                 <MenuItem><Link style={{...linkDefault}} to="/contatos">Contato</Link></MenuItem>
                 <MenuItem><Link style={{...linkDefault}} to="/cotacao">Cotacao</Link></MenuItem>
+                <MenuItem><Link style={{...linkDefault}} to="/requisicao">Requisições</Link></MenuItem>
             </Menu>
             <Avatar src="https://tm.ibxk.com.br/2024/02/27/27184211661338.jpg?ims=1200x675" alt="Avatar do usuário" size={40} />
         </Nav>

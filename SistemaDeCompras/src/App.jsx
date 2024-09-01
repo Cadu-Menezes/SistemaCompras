@@ -7,6 +7,7 @@ import { addProdutoToFirebase, getProdutosFromFirebase } from './Utils/cadastroP
 import { addFornecedorToFirebase, getFornecedoresFromFirebase } from './Utils/fornecedoresService';
 import { addContatoToFirebase, getContatosFromFirebase } from './Utils/contatosService';
 import { addCotacaoToFirebase, getCotacoesFromFirebase } from './Utils/cotacoesService';
+import ListRequisicao from '../src/Pages/Requisicao/ListRequisicao'; 
 
 import Login from './Pages/Login'; 
 
@@ -81,6 +82,9 @@ function App() {
                 <Route path='/cotacao' element={<ListCotacao cotacoes={cotacoes} produtos={products} />} />
                 <Route path='/cotacao/cadastrar' element={<FormCotacoes produtos={products} fornecedores={fornecedores} addCotacaoToFirebase={(cotacao) => addCotacaoToFirebase(cotacao).then(() => fetchData())} />} />
                 <Route path='/cotacao/editar/:id' element={<FormCotacoes cotacoes={cotacoes} produtos={products} fornecedores={fornecedores} />} />
+                
+                {/* Rota Requisicao */}
+                <Route path="/requisicao" element={<ListRequisicao />} />
 
                 {/* Rota Home */}
                 <Route path='/' element={<Home />} />

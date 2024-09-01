@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { getCotacoesFromFirebase, deleteCotacaoFromFirebase } from '../../Utils/cotacoesService';
+import { addRequisicaoToFirebase } from '../../Utils/requisicaoService';
 
 const StyledContainer = styled('div')({
   padding: '2rem',
@@ -48,6 +49,16 @@ const ListCotacao = () => {
     cotacao.produto.toLowerCase().includes(filtro.toLowerCase())
   );
 
+  const handleSolicitarRequisicao = async (cotacao) => {
+    try {
+      console.log('Solicitando requisição para a cotação:', cotacao);
+      await addRequisicaoToFirebase(cotacao);
+      alert('Requisição solicitada com sucesso!');
+    } catch (error) {
+      console.error('Erro ao solicitar requisição:', error);
+    }
+  };
+
   return (
     <StyledContainer>
       <Titulo>Cadastro de Cotação</Titulo>
@@ -81,6 +92,7 @@ const ListCotacao = () => {
           <TableBody>
             {cotacoesFiltradas.map((cotacao) => (
               <TableRow key={cotacao.id}>
+                
                 <TableCell>{cotacao.id}</TableCell>
                 <TableCell>{format(new Date(cotacao.data), 'dd/MM/yyyy')}</TableCell>
                 <TableCell>{cotacao.preco}</TableCell>
@@ -88,23 +100,58 @@ const ListCotacao = () => {
                 <TableCell>{cotacao.fornecedor}</TableCell>
                 <TableCell>{cotacao.quantidade}</TableCell>
                 <TableCell>{cotacao.valorTotal}</TableCell>
+                
                 <TableCell>
-                  <Button 
-                    variant="contained" 
-                    color="secondary" 
-                    onClick={() => navigate(`/cotacao/editar/${cotacao.id}`)}
+                  
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                    gap={1} 
+                    flexWrap="wrap"
                   >
-                    Editar
-                  </Button>
-                  <Button 
-                    variant="contained" 
-                    color="error" 
-                    onClick={() => handleDelete(cotacao.id)} 
-                    style={{ marginLeft: '0.5rem' }}
-                  >
-                    Excluir
-                  </Button>
+
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => navigate(`/cotacao/editar/${cotacao.id}`)}
+                      sx={{ 
+                        minWidth: '100px', 
+                        fontSize: { xs: '0.75rem', sm: '1rem' }, 
+                      }}
+                    >
+                      Editar
+                    </Button>
+                    
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleDelete(cotacao.id)}
+                      sx={{ 
+                        minWidth: '100px',
+                        fontSize: { xs: '0.75rem', sm: '1rem' }, 
+                      }}
+                    >
+                      Excluir
+                    </Button>
+
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleSolicitarRequisicao(cotacao)}
+                      sx={{ 
+                        minWidth: '100px',
+                        fontSize: { xs: '0.75rem', sm: '1rem' }, 
+                      }}
+                    >
+                      Solicitar Requisição
+                    </Button>
+                  
+                  </Box>
+
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
