@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getProdutosFromFirebase, editProdutoInFirebase, deleteProdutoFromFirebase } from '../../Utils/cadastroProdutos';
+import { getUsuariosFromFirebase, editUsuarioFromFiresebase, deleteUsuarioFromFirebase } from '../../Utils/usuariosService';
 import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box } from '@mui/material';
@@ -20,42 +20,42 @@ const StyledTableContainer = styled(TableContainer)({
 });
 
 const ListUsuarios = () => {
-  const [products, setProducts] = useState([]);
+  const [users, setUsers] = useState([]);
   const navigate = useNavigate(); 
 
-  const fetchProducts = async () => {
-    console.log('Buscando produtos...');
-    const produtos = await getProdutosFromFirebase();
-    console.log('Produtos obtidos:', produtos);
-    setProducts(produtos);
+  const fetchUsers = async () => {
+    console.log('Buscando usuarios...');
+    const usuarios = await getUsuariosFromFirebase();
+    console.log('usuarios obtidos:', usuarios);
+    setUsers(usuarios);
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchUsers();
   }, []);
 
-  const handleAddProduct = () => {
-    navigate('/produtos/cadastrar'); 
+  const handleAddUser = () => {
+    navigate('/usuarios/cadastrar'); 
   };
 
-  const handleEditProduct = (productId) => {
+  const handleEditUser= (userId) => {
     // Navegar para a página de edição de produto com o ID do produto
-    navigate(`/produtos/editar/${productId}`);
+    navigate(`/usuarios/editar/${userId}`);
   };
 
-  const handleDeleteProduct = async (productId) => {
-    if (window.confirm('Tem certeza que deseja excluir este produto?')) {
-      await deleteProdutoFromFirebase(productId);
-      fetchProducts(); // Atualizar a lista de produtos após exclusão
+  const handleDeleteUser= async (userid) => {
+    if (window.confirm('Tem certeza que deseja excluir este usuario?')) {
+      await deleteUsuarioFromFirebase(userid);
+      fetchUsers(); // Atualizar a lista de usuarios após exclusão
     }
   };
 
   return (
     <StyledContainer>
-      <Titulo>Cadastro de Produtos</Titulo>
+      <Titulo>Cadastro de Usuarios</Titulo>
 
       <Box display="flex" justifyContent="flex-end" width="100%" maxWidth="800px">
-        <Button variant="contained" color="primary" onClick={handleAddProduct}>
+        <Button variant="contained" color="primary" onClick={handleAddUser}>
           Cadastrar
         </Button>
       </Box>
@@ -66,21 +66,24 @@ const ListUsuarios = () => {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Nome</TableCell>
-              <TableCell>Preço</TableCell>
-              <TableCell>Ações</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Senha</TableCell>
+              <TableCell>Moderação</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.id}</TableCell>
-                <TableCell>{product.Nome}</TableCell>
-                <TableCell>{product.Preco}</TableCell>
+            {users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
+                <TableCell>{user.Nome}</TableCell>
+                <TableCell>{user.Email}</TableCell>
+                <TableCell>{user.Senha}</TableCell>
+                <TableCell>{user.Moderacao}</TableCell>
                 <TableCell>
                   <Button 
                     variant="contained" 
                     color="secondary" 
-                    onClick={() => handleEditProduct(product.id)}
+                    onClick={() => handleEditUser(user.id)}
                     style={{ marginRight: '10px' }}
                   >
                     Editar
@@ -88,7 +91,7 @@ const ListUsuarios = () => {
                   <Button 
                     variant="contained" 
                     color="error" 
-                    onClick={() => handleDeleteProduct(product.id)}
+                    onClick={() => handleDeleteUser(user.id)}
                   >
                     Excluir
                   </Button>
