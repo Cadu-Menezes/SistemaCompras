@@ -39,14 +39,14 @@ export const login = async (email, password) => {
             if (!querySnapshot.empty) {
                 const userDoc = querySnapshot.docs[0];
                 const userData = userDoc.data();
-                localStorage.setItem('authToken', userDoc.id); // Salve o ID do usuário como token
+                localStorage.setItem('authToken', userDoc.id); // Salva o ID do usuário como token
                 return userData; // Retorna os dados do usuário
             } else {
                 throw new Error('Usuário não encontrado na tabela usuarios');
             }
         } catch (customAuthError) {
             console.error('Erro ao fazer login pela tabela usuarios:', customAuthError);
-            throw customAuthError;  // Lança o erro para ser capturado no componente
+            throw customAuthError;  // Lança o erro para ser capturado no component
         }
     }
 };

@@ -78,6 +78,13 @@ const DropdownItem = styled.div`
 const NavBar = ({ breakpoints, setIsAuthenticated }) => {
     const navigate = useNavigate();
     const [showDropdown, setShowDropdown] = useState(false);
+    
+    // Função para verificar o papel do usuário no localStorage
+    const ProfileUser = () => {
+        const role = localStorage.getItem('perfil'); 
+        console.log("Role: ", role);
+        return role 
+    };
 
     const handleAvatarClick = () => {
         setShowDropdown(!showDropdown);
@@ -85,7 +92,7 @@ const NavBar = ({ breakpoints, setIsAuthenticated }) => {
 
     const handleLogout = async () => {
         try {
-            await logout(); // Chama a função de logout
+            await logout(); 
             setIsAuthenticated(false); // Atualiza o estado de autenticação no App.js
             navigate('/login', { replace: true }); // Redireciona para a tela de login
         } catch (error) {
@@ -102,9 +109,13 @@ const NavBar = ({ breakpoints, setIsAuthenticated }) => {
                 <MenuItem><Link style={linkDefault} to="/fornecedores">Fornecedores</Link></MenuItem>
                 <MenuItem><Link style={linkDefault} to="/contatos">Contatos</Link></MenuItem>
                 <MenuItem><Link style={linkDefault} to="/cotacao">Cotações</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/requisicao">Requisições</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/usuarios">Usuarios</Link></MenuItem>
-               
+                {ProfileUser() != "colaborador" && (
+                    <MenuItem><Link style={linkDefault} to="/requisicao">Requisições</Link></MenuItem>
+                )}
+                {ProfileUser() != "colaborador" && (
+                    <MenuItem><Link style={linkDefault} to="/usuarios">Usuarios</Link></MenuItem>
+                )}
+                
             </Menu>
             <div style={{ position: 'relative' }}>
                 <Avatar 

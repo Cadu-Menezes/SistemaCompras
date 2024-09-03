@@ -57,6 +57,8 @@ const Login = (props) => {
     try {
       const user = await login(email, password);
       console.log('Usuário logado:', user);
+      console.log('Perfil: ', user.Moderacao);
+      localStorage.setItem('perfil', user.Moderacao); // Salva o Perfil do usuário
   
       if (props.setIsAuthenticated) {
         props.setIsAuthenticated(true);
