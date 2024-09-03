@@ -8,10 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AlertMessage from '../../Components/AlertMessage';
 import LembrarMeCheck from '../../Components/CheckBox';
-import { signInWithEmailAndPassword } from "firebase/auth";
-
-import { auth } from '../../firebaseConfig'; 
-
+import { login } from '../../Utils/AuthUtils';  
 
 const StyledContainer = styled.div`
   background-color: #C2C2C2;
@@ -25,7 +22,7 @@ const StyledContainer = styled.div`
   align-items: center;
   ${(props) => props.style}
 
-  @media(min-width: ${(props) => props.breakpoints.small}){
+  @media(min-width: ${(props) => props.breakpoints?.small || '768px'}){
     flex-direction: row;
     max-width: 100%;
     overflow-x: hidden;
@@ -42,13 +39,13 @@ const StyledForm = styled(Box)`
 
   ${(props) => props.style}
 
-  @media(min-width: ${(props) => props.breakpoints.small}){
+  @media(min-width: ${(props) => props.breakpoints?.small || '768px'}){
     width: 50%;
   }
 `;
 
-
 const Login = (props) => {
+  
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -58,10 +55,13 @@ const Login = (props) => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Usuário logado:', userCredential.user);
-      props.setIsAuthenticated(true);  
-      navigate("/");  
+      const user = await login(email, password); 
+      console.log('Usuário logado:', user);
+  
+      if (props.setIsAuthenticated) {
+        props.setIsAuthenticated(true);
+      }
+      navigate("/");
     } catch (error) {
       console.error('Erro de autenticação:', error);
       setAlerta({
@@ -73,7 +73,9 @@ const Login = (props) => {
   };
 
   return (
+    
     <StyledContainer breakpoints={props.breakpoints}>
+      
       <StyledForm
         breakpoints={props.breakpoints}
         component="form"
@@ -85,9 +87,7 @@ const Login = (props) => {
         justifyContent="center"
         onSubmit={handleLogin}
       >
-        <Typography variant="h5" component="div" gutterBottom>
-          {props.LogoTitle}
-        </Typography>
+        <h1>Login</h1>
 
         {alerta && (
           <AlertMessage 
@@ -134,6 +134,3 @@ const Login = (props) => {
 };
 
 export default Login;
-
-
-

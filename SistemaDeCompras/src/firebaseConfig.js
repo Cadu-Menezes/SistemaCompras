@@ -1,6 +1,7 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApp, getApps } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs } from "firebase/firestore";
+import { getFirestore } from 'firebase/firestore';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCIiTHAhRx8KWtw4qOijjXiohWQIuLrCOc",
@@ -12,7 +13,10 @@ const firebaseConfig = {
   measurementId: "G-E94N0SBTZS"
 };
 
-const app = initializeApp(firebaseConfig);
+// Verifica se a aplicação Firebase já foi inicializada (estava com erros quando eu abria uma janela anônima junto)
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+export { auth, db };
