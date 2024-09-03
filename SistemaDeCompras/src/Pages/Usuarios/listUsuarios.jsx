@@ -69,6 +69,7 @@ const ListUsuarios = () => {
               <TableCell>Email</TableCell>
               <TableCell>Senha</TableCell>
               <TableCell>Moderação</TableCell>
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -80,21 +81,22 @@ const ListUsuarios = () => {
                 <TableCell>{user.Senha}</TableCell>
                 <TableCell>{user.Moderacao}</TableCell>
                 <TableCell>
-                  <Button 
-                    variant="contained" 
-                    color="secondary" 
-                    onClick={() => handleEditUser(user.id)}
-                    style={{ marginRight: '10px' }}
-                  >
-                    Editar
-                  </Button>
-                  <Button 
-                    variant="contained" 
-                    color="error" 
-                    onClick={() => handleDeleteUser(user.id)}
-                  >
-                    Excluir
-                  </Button>
+                  <Box display="flex" gap="1rem">
+                    <Button 
+                      variant="contained" 
+                      color="secondary"  
+                      onClick={() => handleEditUser(user.id)}
+                    >
+                      Editar
+                    </Button>
+                    <Button 
+                      variant="contained" 
+                      color="error"  
+                      onClick={() => handleDeleteUser(user.id)}
+                    >
+                      Excluir
+                    </Button>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}

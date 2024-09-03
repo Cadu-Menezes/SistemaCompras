@@ -1,6 +1,6 @@
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc } from 'firebase/firestore';
 
 // Configuração do Firebase
 const firebaseConfig = {
@@ -20,13 +20,34 @@ const db = getFirestore(app);
 // Função para login
 export const login = async (email, password) => {
     try {
+        // Primeiro, tenta fazer login pelo Firebase Authentication
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         localStorage.setItem('authToken', await user.getIdToken());
         return user;
-    } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        throw error;
+    } catch (firebaseError) {
+        console.error('Erro ao fazer login com Firebase:', firebaseError);
+
+        // Se falhar, tenta fazer login pela tabela de usuários personalizada
+        try {
+            const usersRef = collection(db, 'usuarios');  
+            console.log("email: ", email);
+            console.log("password: ", password);
+            const q = query(usersRef, where("Email", "==", email), where("Senha", "==", password));
+            const querySnapshot = await getDocs(q);
+            
+            if (!querySnapshot.empty) {
+                const userDoc = querySnapshot.docs[0];
+                const userData = userDoc.data();
+                localStorage.setItem('authToken', userDoc.id); // Salve o ID do usuário como token
+                return userData; // Retorna os dados do usuário
+            } else {
+                throw new Error('Usuário não encontrado na tabela usuarios');
+            }
+        } catch (customAuthError) {
+            console.error('Erro ao fazer login pela tabela usuarios:', customAuthError);
+            throw customAuthError;  // Lança o erro para ser capturado no componente
+        }
     }
 };
 

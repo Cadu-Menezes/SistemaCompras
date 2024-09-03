@@ -55,7 +55,7 @@ const Login = (props) => {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const user = await login(email, password); 
+      const user = await login(email, password);
       console.log('Usuário logado:', user);
   
       if (props.setIsAuthenticated) {
