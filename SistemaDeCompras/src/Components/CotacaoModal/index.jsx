@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, MenuItem } from '@mui/material';
-import { addCotacaoToFirebase } from '../../Utils/cotacoesService';
+import { addCotacaoToFirebase, getCotaçõesPorPedido } from '../../Utils/cotacoesService';
 import { getFornecedoresFromFirebase } from '../../Utils/fornecedoresService';
 import { getProdutosFromFirebase } from '../../Utils/cadastroProdutos';
+import { updatePedidoStatus } from '../../Utils/pedidosService';
 
 const CotacaoModal = ({ open, onClose, pedido }) => {
   const [produtos, setProdutos] = useState([]);
@@ -63,9 +64,27 @@ const CotacaoModal = ({ open, onClose, pedido }) => {
       status: 'aberta',
       pedidoId: pedido.id,
     };
-
+  
     try {
+      // Adiciona a nova cotação
       await addCotacaoToFirebase(cotacao);
+  
+      // Atualiza o status do pedido com base no número de cotações
+      const cotaçõesExistentes = await getCotaçõesPorPedido(pedido.id);
+      const numeroCotações = cotaçõesExistentes.length + 1; // Inclui a nova cotação
+  
+      if (numeroCotações === 2) {
+        // Atualiza o status para "em cotação" se for a primeira cotação
+        await updatePedidoStatus(pedido.id, 'em cotacao');
+      } else if (numeroCotações === 4) {
+        // Atualiza o status para "cotada" se for a terceira cotação
+        await updatePedidoStatus(pedido.id, 'cotada');
+      } else if (numeroCotações > 3) {
+        // Caso o número de cotações exceda 3, exibe uma mensagem ou desativa a funcionalidade
+        alert('Não é possível cadastrar mais de 3 cotações para este pedido.');
+        return;
+      }
+  
       alert('Cotação cadastrada com sucesso!');
       onClose();
     } catch (error) {

@@ -62,3 +62,14 @@ export const updatePedidoInFirebase = async (id, updatedPedido) => {
     console.error("Erro ao atualizar pedido: ", e);
   }
 };
+
+// Atualiza o status de um pedido
+export const updatePedidoStatus = async (pedidoId, status) => {
+  try {
+    const pedidoRef = doc(db, 'pedidos', pedidoId);
+    await updateDoc(pedidoRef, { status });
+    console.log('Status do pedido atualizado para:', status);
+  } catch (e) {
+    console.error('Erro ao atualizar status do pedido:', e);
+  }
+};

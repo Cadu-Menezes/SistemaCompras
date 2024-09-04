@@ -26,7 +26,7 @@ export const getCotaçõesFromFirebase = async () => {
   }
 };
 
-// Obtém cotações associadas a um pedido específico
+// Obtém cotações associadas a um pedido 
 export const getCotaçõesPorPedido = async (pedidoId) => {
   try {
     console.log("Buscando cotações para o pedido ID:", pedidoId); 
