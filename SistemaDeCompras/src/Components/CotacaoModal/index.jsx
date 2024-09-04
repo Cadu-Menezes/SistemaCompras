@@ -66,13 +66,16 @@ const CotacaoModal = ({ open, onClose, pedido }) => {
     };
   
     try {
-      // Adiciona a nova cotação
-      await addCotacaoToFirebase(cotacao);
-  
+          
       // Atualiza o status do pedido com base no número de cotações
       const cotaçõesExistentes = await getCotaçõesPorPedido(pedido.id);
       const numeroCotações = cotaçõesExistentes.length + 1; // Inclui a nova cotação
-  
+      
+      if (numeroCotações < 3) {
+        // Adiciona a nova cotação
+        await addCotacaoToFirebase(cotacao);
+      }
+
       if (numeroCotações === 2) {
         // Atualiza o status para "em cotação" se for a primeira cotação
         await updatePedidoStatus(pedido.id, 'em cotacao');
