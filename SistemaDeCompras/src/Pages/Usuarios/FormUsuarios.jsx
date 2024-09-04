@@ -40,6 +40,9 @@ const FormUsuarios = ({ refreshUsuarios }) => {
   const [Senha, setSenha] = useState('');
   const [Moderacao, setModeracao] = useState('');
 
+  // Verifica o papel do usuário logado
+  const userRole = localStorage.getItem('perfil'); // 'admin' ou 'colaborador'
+
   useEffect(() => {
     const fetchUsuarios = async () => {
       if (id) {
@@ -116,7 +119,10 @@ const FormUsuarios = ({ refreshUsuarios }) => {
             onChange={(e) => setModeracao(e.target.value)}
             label="Moderação"
           >
-            <MenuItem value="admin">Admin</MenuItem>
+            {/* Se o usuário logado for colaborador, ele só pode cadastrar colaboradores */}
+            {userRole === 'admin' && (
+              <MenuItem value="admin">Admin</MenuItem>
+            )}
             <MenuItem value="colaborador">Colaborador</MenuItem>
           </Select>
         </FormControl>

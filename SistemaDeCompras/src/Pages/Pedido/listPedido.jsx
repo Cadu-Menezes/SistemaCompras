@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, TextField, Collapse, IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { getPedidosDoUsuario, deletePedidoFromFirebase } from '../../Utils/pedidosService';
+import { getPedidosDoUsuario, getPedidosFromFirebase, deletePedidoFromFirebase } from '../../Utils/pedidosService';
 import { getCotaçõesPorPedido } from '../../Utils/cotacoesService'; 
 import CotacaoModal from '../../Components/CotacaoModal'; 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -25,7 +25,7 @@ const StyledTableContainer = styled(TableContainer)(({
   overflowX: 'auto',
 }));
 
-const CollapsibleTableRow = ({ pedido, cotações, onSolicitarCotacao, fetchCotações, navigate, handleDelete }) => {
+const CollapsibleTableRow = ({ pedido, cotações, onSolicitarCotacao, fetchCotações, navigate, handleDelete, isAdmin }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -88,18 +88,21 @@ const CollapsibleTableRow = ({ pedido, cotações, onSolicitarCotacao, fetchCota
             >
               Excluir
             </Button>
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => onSolicitarCotacao(pedido)}
-              sx={{
-                minWidth: '100px',
-                fontSize: { xs: '0.75rem', sm: '1rem' },
-              }}
-            >
-              Cadastrar Cotação
-            </Button>
+            
+            {isAdmin && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => onSolicitarCotacao(pedido)}
+                sx={{
+                  minWidth: '100px',
+                  fontSize: { xs: '0.75rem', sm: '1rem' },
+                }}
+              >
+                Cadastrar Cotação
+              </Button>
+            )}
+            
           </Box>
         </TableCell>
       </TableRow>
@@ -148,13 +151,22 @@ const ListPedido = () => {
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [cotações, setCotações] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false); // Verifica se o usuário é admin
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPedidos = async () => {
       const usuarioLogado = localStorage.getItem('authToken');
-      const pedidosFromFirebase = await getPedidosDoUsuario(usuarioLogado);
-      setPedidos(pedidosFromFirebase);
+      const perfil = localStorage.getItem('perfil'); // Recupera o perfil do usuário
+
+      if (perfil === 'admin') {
+        setIsAdmin(true); // Define o estado como admin
+        const todosPedidos = await getPedidosFromFirebase(); // Busca todos os pedidos
+        setPedidos(todosPedidos);
+      } else {
+        const pedidosDoUsuario = await getPedidosDoUsuario(usuarioLogado); // Busca apenas os pedidos do usuário
+        setPedidos(pedidosDoUsuario);
+      }
     };
 
     fetchPedidos();
@@ -162,9 +174,7 @@ const ListPedido = () => {
 
   const fetchCotações = async (pedidoId) => {
     try {
-      console.log("Buscando cotações para o pedido ID:", pedidoId);
       const cotaçõesFromFirebase = await getCotaçõesPorPedido(pedidoId);
-      console.log("Cotação por Pedido: ", cotaçõesFromFirebase);
       setCotações(prevCotações => ({
         ...prevCotações,
         [pedidoId]: cotaçõesFromFirebase
@@ -237,6 +247,7 @@ const ListPedido = () => {
                 fetchCotações={fetchCotações}
                 navigate={navigate}
                 handleDelete={handleDelete}
+                isAdmin={isAdmin} // passa se é admin ou não
               />
             ))}
           </TableBody>

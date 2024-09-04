@@ -83,8 +83,11 @@ const NavBar = ({ breakpoints, setIsAuthenticated }) => {
     const ProfileUser = () => {
         const role = localStorage.getItem('perfil'); 
         console.log("Role: ", role);
-        return role 
+        return role; 
     };
+
+    // Obtenha o papel do usuário chamando a função ProfileUser
+    const role = ProfileUser();
 
     const handleAvatarClick = () => {
         setShowDropdown(!showDropdown);
@@ -104,13 +107,25 @@ const NavBar = ({ breakpoints, setIsAuthenticated }) => {
         <Nav breakpoints={breakpoints}>
             <Logo src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYW1Q7NQ7qq8U_HPCxh3SFHKBK-RJC0mKh6Q&s" alt="Logo" />
             <Menu breakpoints={breakpoints}>
-                <MenuItem><Link style={linkDefault} to="/">Inicio</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/produtos">Produtos</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/fornecedores">Fornecedores</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/contatos">Contatos</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/pedido">Requisição</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/requisicao">Cotação</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/usuarios">Usuarios</Link></MenuItem>
+               
+                {role === 'admin' && ( 
+                    <>
+                        <MenuItem><Link style={linkDefault} to="/">Inicio</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/produtos">Produtos</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/fornecedores">Fornecedores</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/contatos">Contatos</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/pedido">Requisições e Cotações</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/usuarios">Usuarios</Link></MenuItem>
+                    </>
+                )}
+
+                {role === 'colaborador' && ( 
+                    <>
+                        <MenuItem><Link style={linkDefault} to="/">Inicio</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/pedido">Requisições e Cotações</Link></MenuItem>
+                        <MenuItem><Link style={linkDefault} to="/usuarios">Usuarios</Link></MenuItem>
+                    </>
+                )}
             </Menu>
             <div style={{ position: 'relative' }}>
                 <Avatar 
