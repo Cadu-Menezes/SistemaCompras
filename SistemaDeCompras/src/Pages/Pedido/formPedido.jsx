@@ -37,7 +37,7 @@ const FormPedidos = ({ pedidos = [], setPedidos }) => {
   const [descricao, setDescricao] = useState('');
   const [produto, setProduto] = useState('');
   const [quantidade, setQuantidade] = useState('');
-  const [status, setStatus] = useState('aberta');  // Novo campo status
+  const [status, setStatus] = useState('aberta');  
   const [usuario, setUsuario] = useState('');
 
   const navigate = useNavigate();
@@ -74,7 +74,7 @@ const FormPedidos = ({ pedidos = [], setPedidos }) => {
         descricao,
         produto,
         quantidade,
-        status,  // Incluindo status no pedido
+        status,  
         usuario,
       };
 

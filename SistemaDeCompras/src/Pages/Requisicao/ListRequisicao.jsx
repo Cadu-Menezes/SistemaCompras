@@ -37,7 +37,7 @@ const ListRequisicao = () => {
 
   useEffect(() => {
     const fetchRequisicoes = async () => {
-      const usuarioLogado = localStorage.getItem('authToken'); // Ou a maneira como você obtém o ID do usuário logado
+      const usuarioLogado = localStorage.getItem('authToken'); 
       if (usuarioLogado) {
         const requisicoesFromFirebase = await getRequisicoesDoUsuario(usuarioLogado);
         setRequisicoes(requisicoesFromFirebase);
@@ -104,8 +104,8 @@ const ListRequisicao = () => {
           <TableBody>
             {requisicoesFiltradas.map((requisicao) => (
               <TableRow key={requisicao.id}>
-                <TableCell>{requisicao.id}</TableCell> {/* ID da Requisição */}
-                <TableCell>{requisicao.cotacaoId}</TableCell> {/* ID da Cotação */}
+                <TableCell>{requisicao.id}</TableCell> 
+                <TableCell>{requisicao.cotacaoId}</TableCell> 
                 <TableCell>{format(new Date(requisicao.data), 'dd/MM/yyyy')}</TableCell>
                 <TableCell>{requisicao.preco}</TableCell>
                 <TableCell>{requisicao.produto}</TableCell>

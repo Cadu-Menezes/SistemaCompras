@@ -3,7 +3,7 @@ import { NativeBaseProvider } from 'native-base';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Loading from './Components/Loading';
 import NavBar from './Components/NavBar';
-import { checkAuth } from './Utils/AuthUtils';  // Atualize a importação
+import { checkAuth } from './Utils/AuthUtils'; 
 import ListRequisicao from '../src/Pages/Requisicao/ListRequisicao';
 import Login from './Pages/Login';
 
