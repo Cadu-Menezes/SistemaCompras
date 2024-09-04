@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { TextField, Button, Typography } from '@mui/material';
+import { TextField, Button, Typography, MenuItem } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addCotacaoToFirebase, getCotacoesFromFirebase, updateCotacaoInFirebase } from '../../Utils/cotacoesService';
-import { getProdutosFromFirebase } from '../../Utils/cadastroProdutos';
+import { addPedidoToFirebase, getPedidosFromFirebase, updatePedidoInFirebase } from '../../Utils/pedidosService';
 
 const FormContainer = styled.div`
   margin-left: 30%;
@@ -33,12 +32,12 @@ const StyledButtons = styled.div`
   width: 100%;
 `;
 
-const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
+const FormPedidos = ({ pedidos = [], setPedidos }) => {
   const [data, setData] = useState('');
   const [descricao, setDescricao] = useState('');
   const [produto, setProduto] = useState('');
   const [quantidade, setQuantidade] = useState('');
-  const [produtos, setProdutos] = useState([]);
+  const [status, setStatus] = useState('aberta');  // Novo campo status
   const [usuario, setUsuario] = useState('');
 
   const navigate = useNavigate();
@@ -46,19 +45,16 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
 
   useEffect(() => {
     const fetchDados = async () => {
-      const produtosData = await getProdutosFromFirebase();
-      setProdutos(produtosData);
-
-      // Carrega as cotações e preenche os campos ao editar
       if (id) {
-        const cotacoesData = await getCotacoesFromFirebase();
-        const cotacaoToEdit = cotacoesData.find((cotacao) => cotacao.id === id);
-        if (cotacaoToEdit) {
-          setData(cotacaoToEdit.data);
-          setDescricao(cotacaoToEdit.descricao);
-          setProduto(cotacaoToEdit.produto);
-          setQuantidade(cotacaoToEdit.quantidade || '');
-          setUsuario(cotacaoToEdit.usuario);
+        const pedidosData = await getPedidosFromFirebase();
+        const pedidoToEdit = pedidosData.find((pedido) => pedido.id === id);
+        if (pedidoToEdit) {
+          setData(pedidoToEdit.data);
+          setDescricao(pedidoToEdit.descricao);
+          setProduto(pedidoToEdit.produto);
+          setQuantidade(pedidoToEdit.quantidade || '');
+          setStatus(pedidoToEdit.status || 'aberta');
+          setUsuario(pedidoToEdit.usuario);
         }
       } else {
         const usuarioLogado = localStorage.getItem('authToken');
@@ -72,42 +68,43 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (data && descricao && produto && quantidade && usuario) {
-      const cotacaoData = {
+    if (data && descricao && produto && quantidade && status && usuario) {
+      const pedidoData = {
         data,
         descricao,
         produto,
         quantidade,
-        usuario
+        status,  // Incluindo status no pedido
+        usuario,
       };
 
       try {
         if (id) {
-          await updateCotacaoInFirebase(id, cotacaoData);
+          await updatePedidoInFirebase(id, pedidoData);
         } else {
-          await addCotacaoToFirebase(cotacaoData);
+          await addPedidoToFirebase(pedidoData);
         }
 
-        if (setCotacoes) {
-          const updatedCotacoes = await getCotacoesFromFirebase();
-          setCotacoes(updatedCotacoes);
+        if (setPedidos) {
+          const updatedPedidos = await getPedidosFromFirebase();
+          setPedidos(updatedPedidos);
         }
 
-        navigate('/cotacao');
+        navigate('/pedido');
       } catch (error) {
-        console.error("Erro ao salvar a cotação:", error);
+        console.error("Erro ao salvar o pedido:", error);
       }
     }
   };
 
   const handleCancel = () => {
-    navigate('/cotacao');
+    navigate('/pedido');
   };
 
   return (
     <FormContainer>
       <Typography variant="h4">
-        {id ? 'Editar Cotação' : 'Cadastrar Cotação'}
+        {id ? 'Editar Pedido' : 'Cadastrar Pedido'}
       </Typography>
       
       <Form onSubmit={handleSubmit}>
@@ -132,21 +129,13 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
         />
 
         <TextField
+          label="Produto"
           variant="outlined"
           margin="normal"
           fullWidth
-          select
           value={produto}
-          onChange={(e) => setProduto(e.target.value)} 
-          SelectProps={{
-            native: true,
-          }}
-        >
-          <option value="">Selecione um produto</option>
-          {produtos.map((produto) => (
-            <option key={produto.id} value={produto.Nome}>{produto.Nome}</option> 
-          ))}
-        </TextField>
+          onChange={(e) => setProduto(e.target.value)}
+        />
 
         <TextField
           label="Descrição"
@@ -167,6 +156,20 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
           type="number"
         />
 
+        <TextField
+          select
+          label="Status"
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <MenuItem value="aberta">Aberta</MenuItem>
+          <MenuItem value="em cotacao">Em Cotação</MenuItem>
+          <MenuItem value="cotada">Cotada</MenuItem>
+        </TextField>
+
         <StyledButtons>
           <Button variant="contained" color="primary" type="submit">
             {id ? 'Salvar' : 'Cadastrar'}
@@ -181,4 +184,4 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
   );
 };
 
-export default FormCotacoes;
+export default FormPedidos;

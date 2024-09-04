@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { getCotacoesDoUsuario, deleteCotacaoFromFirebase } from '../../Utils/cotacoesService';
+import { getPedidosDoUsuario, deletePedidoFromFirebase } from '../../Utils/pedidosService';
 import { addRequisicaoToFirebase } from '../../Utils/requisicaoService';
 
 const StyledContainer = styled('div')({
@@ -22,19 +22,19 @@ const StyledTableContainer = styled(TableContainer)({
   overflowX: 'auto',
 });
 
-const ListCotacao = () => {
-  const [cotacoes, setCotacoes] = useState([]);
+const ListPedido = () => {
+  const [pedidos, setPedidos] = useState([]);
   const [filtro, setFiltro] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCotacoes = async () => {
+    const fetchPedidos = async () => {
       const usuarioLogado = localStorage.getItem('authToken');
-      const cotacoesFromFirebase = await getCotacoesDoUsuario(usuarioLogado);
-      setCotacoes(cotacoesFromFirebase);
+      const pedidosFromFirebase = await getPedidosDoUsuario(usuarioLogado);
+      setPedidos(pedidosFromFirebase);
     };
 
-    fetchCotacoes();
+    fetchPedidos();
   }, []);
 
   const handleFiltroChange = (event) => {
@@ -42,21 +42,21 @@ const ListCotacao = () => {
   };
 
   const handleDelete = async (id) => {
-    await deleteCotacaoFromFirebase(id);
-    setCotacoes(cotacoes.filter(cotacao => cotacao.id !== id));
+    await deletePedidoFromFirebase(id);
+    setPedidos(pedidos.filter(pedido => pedido.id !== id));
   };
 
-  const cotacoesFiltradas = cotacoes.filter((cotacao) =>
-    cotacao.produto.toLowerCase().includes(filtro.toLowerCase())
+  const pedidosFiltrados = pedidos.filter((pedido) =>
+    pedido.produto.toLowerCase().includes(filtro.toLowerCase())
   );
 
-  const handleSolicitarRequisicao = async (cotacao) => {
+  const handleSolicitarRequisicao = async (pedido) => {
     try {
-      console.log('Solicitando cotação para a requisição:', cotacao);
-      await addRequisicaoToFirebase(cotacao);
-      alert('Cotação solicitada com sucesso!');
+      console.log('Solicitando pedido para a requisição:', pedido);
+      await addRequisicaoToFirebase(pedido);
+      alert('Pedido solicitado com sucesso!');
     } catch (error) {
-      console.error('Erro ao solicitar cotação:', error);
+      console.error('Erro ao solicitar pedido:', error);
     }
   };
 
@@ -71,7 +71,7 @@ const ListCotacao = () => {
           value={filtro}
           onChange={handleFiltroChange}
         />
-        <Button variant="contained" color="primary" onClick={() => navigate('/cotacao/cadastrar')}>
+        <Button variant="contained" color="primary" onClick={() => navigate('/pedido/cadastrar')}>
           Cadastrar
         </Button>
       </Box>
@@ -85,17 +85,19 @@ const ListCotacao = () => {
               <TableCell>Descrição</TableCell>
               <TableCell>Produto</TableCell>
               <TableCell>Quantidade</TableCell>
+              <TableCell>Status</TableCell>
               <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {cotacoesFiltradas.map((cotacao) => (
-              <TableRow key={cotacao.id}>
-                <TableCell>{cotacao.id}</TableCell>
-                <TableCell>{format(new Date(cotacao.data), 'dd/MM/yyyy')}</TableCell>
-                <TableCell>{cotacao.descricao}</TableCell>
-                <TableCell>{cotacao.produto}</TableCell>
-                <TableCell>{cotacao.quantidade}</TableCell>
+            {pedidosFiltrados.map((pedido) => (
+              <TableRow key={pedido.id}>
+                <TableCell>{pedido.id}</TableCell>
+                <TableCell>{format(new Date(pedido.data), 'dd/MM/yyyy')}</TableCell>
+                <TableCell>{pedido.descricao}</TableCell>
+                <TableCell>{pedido.produto}</TableCell>
+                <TableCell>{pedido.quantidade}</TableCell>
+                <TableCell>{pedido.status}</TableCell>
                 <TableCell>
                   <Box
                     display="flex"
@@ -108,7 +110,7 @@ const ListCotacao = () => {
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={() => navigate(`/cotacao/editar/${cotacao.id}`)}
+                      onClick={() => navigate(`/pedido/editar/${pedido.id}`)}
                       sx={{
                         minWidth: '100px',
                         fontSize: { xs: '0.75rem', sm: '1rem' },
@@ -120,7 +122,7 @@ const ListCotacao = () => {
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleDelete(cotacao.id)}
+                      onClick={() => handleDelete(pedido.id)}
                       sx={{
                         minWidth: '100px',
                         fontSize: { xs: '0.75rem', sm: '1rem' },
@@ -132,7 +134,7 @@ const ListCotacao = () => {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleSolicitarRequisicao(cotacao)}
+                      onClick={() => handleSolicitarRequisicao(pedido)}
                       sx={{
                         minWidth: '100px',
                         fontSize: { xs: '0.75rem', sm: '1rem' },
@@ -152,4 +154,4 @@ const ListCotacao = () => {
   );
 };
 
-export default ListCotacao;
+export default ListPedido;

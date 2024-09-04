@@ -14,8 +14,8 @@ const ListFornecedor = lazy(() => import('./Pages/Fornecedor/listFornecedor'));
 const FormFornecedores = lazy(() => import('./Pages/Fornecedor/formFornecedor'));
 const ListContato = lazy(() => import('./Pages/Contato/listContato'));
 const FormContato = lazy(() => import('./Pages/Contato/formContato'));
-const ListCotacao = lazy(() => import('./Pages/Cotacao/listCotacao'));
-const FormCotacoes = lazy(() => import('./Pages/Cotacao/formCotacao'));
+const ListPedido = lazy(() => import('./Pages/Pedido/listPedido'));
+const FormPedido = lazy(() => import('./Pages/Pedido/formPedido'));
 const ListUsuarios = lazy(() => import('./Pages/Usuarios/listUsuarios'));
 const FormUsuarios = lazy(() => import('./Pages/Usuarios/FormUsuarios'));
 
@@ -65,9 +65,9 @@ function App() {
                 <Route path="/contatos/cadastrar" element={<FormContato />} />
                 <Route path="/contatos/editar/:id" element={<FormContato />} />
 
-                <Route path="/cotacao" element={<ListCotacao />} />
-                <Route path="/cotacao/cadastrar" element={<FormCotacoes />} />
-                <Route path="/cotacao/editar/:id" element={<FormCotacoes />} />
+                <Route path="/pedido" element={<ListPedido />} />
+                <Route path="/pedido/cadastrar" element={<FormPedido />} />
+                <Route path="/pedido/editar/:id" element={<FormPedido />} />
 
                 <Route path="/requisicao" element={<ListRequisicao />} />
 

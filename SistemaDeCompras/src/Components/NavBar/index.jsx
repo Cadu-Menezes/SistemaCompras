@@ -108,7 +108,7 @@ const NavBar = ({ breakpoints, setIsAuthenticated }) => {
                 <MenuItem><Link style={linkDefault} to="/produtos">Produtos</Link></MenuItem>
                 <MenuItem><Link style={linkDefault} to="/fornecedores">Fornecedores</Link></MenuItem>
                 <MenuItem><Link style={linkDefault} to="/contatos">Contatos</Link></MenuItem>
-                <MenuItem><Link style={linkDefault} to="/cotacao">Requisição</Link></MenuItem>
+                <MenuItem><Link style={linkDefault} to="/pedido">Requisição</Link></MenuItem>
                 <MenuItem><Link style={linkDefault} to="/requisicao">Cotação</Link></MenuItem>
                 <MenuItem><Link style={linkDefault} to="/usuarios">Usuarios</Link></MenuItem>
             </Menu>
