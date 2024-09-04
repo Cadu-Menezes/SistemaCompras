@@ -25,7 +25,7 @@ const StyledTableContainer = styled(TableContainer)(({
   overflowX: 'auto',
 }));
 
-const CollapsibleTableRow = ({ pedido, cotações, onSolicitarCotacao, fetchCotações }) => {
+const CollapsibleTableRow = ({ pedido, cotações, onSolicitarCotacao, fetchCotações, navigate, handleDelete }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -147,7 +147,7 @@ const ListPedido = () => {
   const [filtro, setFiltro] = useState('');
   const [selectedPedido, setSelectedPedido] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [cotações, setCotações] = useState([]);
+  const [cotações, setCotações] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -190,10 +190,6 @@ const ListPedido = () => {
   const handleSolicitarCotacao = (pedido) => {
     setSelectedPedido(pedido);
     setOpenModal(true);
-  };
-
-  const handleColapseCotacao = (pedido) => {
-    setSelectedPedido(pedido);
   };
 
   const handleCloseModal = () => {
@@ -239,6 +235,8 @@ const ListPedido = () => {
                 cotações={cotações[pedido.id] || []}
                 onSolicitarCotacao={handleSolicitarCotacao}
                 fetchCotações={fetchCotações}
+                navigate={navigate}
+                handleDelete={handleDelete}
               />
             ))}
           </TableBody>
