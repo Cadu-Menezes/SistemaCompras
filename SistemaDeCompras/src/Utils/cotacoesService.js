@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "firebase/firestore";
 import { db } from '../firebaseConfig';
 
 export const addCotacaoToFirebase = async (cotacao) => {
@@ -20,6 +20,26 @@ export const getCotacoesFromFirebase = async () => {
     return cotacoes;
   } catch (e) {
     console.error("Erro ao obter cotações: ", e);
+    return [];
+  }
+};
+
+export const getCotacoesDoUsuario = async (usuarioId) => {
+  try {
+    console.log('Buscando cotações do usuário:', usuarioId);
+
+    const cotacoesRef = collection(db, 'cotacoes'); 
+    const q = query(cotacoesRef, where('usuario', '==', usuarioId));
+    const querySnapshot = await getDocs(q);
+    
+    const cotacoes = [];
+    querySnapshot.forEach((doc) => {
+      cotacoes.push({ id: doc.id, ...doc.data() });
+    });
+    console.log('Cotações encontradas:', cotacoes);
+    return cotacoes;
+  } catch (error) {
+    console.error('Erro ao buscar cotações do usuário:', error.message);
     return [];
   }
 };

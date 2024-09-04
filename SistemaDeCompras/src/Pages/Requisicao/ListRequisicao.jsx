@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, TextField, Button } from '@mui/material';
 import { format } from 'date-fns';
-import { getRequisicoesFromFirebase } from '../../Utils/requisicaoService';
+import { getRequisicoesDoUsuario, deleteRequisicaoFromFirebase } from '../../Utils/requisicaoService';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const StyledContainer = styled('div')({
   padding: '2rem',
@@ -13,7 +14,9 @@ const StyledContainer = styled('div')({
   alignItems: 'center',
 });
 
-const Titulo = styled('h1')({});
+const Titulo = styled('h1')({
+  marginBottom: '1rem',
+});
 
 const StyledTableContainer = styled(TableContainer)({
   marginTop: '2rem',
@@ -22,14 +25,23 @@ const StyledTableContainer = styled(TableContainer)({
   overflowX: 'auto',
 });
 
+const StyledButton = styled(Button)(({ theme }) => ({
+  margin: theme.spacing(1),
+  minWidth: '120px',
+  fontSize: { xs: '0.75rem', sm: '1rem' },
+}));
+
 const ListRequisicao = () => {
   const [requisicoes, setRequisicoes] = useState([]);
   const [filtro, setFiltro] = useState('');
 
   useEffect(() => {
     const fetchRequisicoes = async () => {
-      const requisicoesFromFirebase = await getRequisicoesFromFirebase();
-      setRequisicoes(requisicoesFromFirebase);
+      const usuarioLogado = localStorage.getItem('authToken'); // Ou a maneira como você obtém o ID do usuário logado
+      if (usuarioLogado) {
+        const requisicoesFromFirebase = await getRequisicoesDoUsuario(usuarioLogado);
+        setRequisicoes(requisicoesFromFirebase);
+      }
     };
 
     fetchRequisicoes();
@@ -47,6 +59,15 @@ const ListRequisicao = () => {
     alert(`Requisição ${id} rejeitada`);
   };
 
+  const handleExcluir = async (id) => {
+    try {
+      await deleteRequisicaoFromFirebase(id);
+      setRequisicoes(requisicoes.filter(requisicao => requisicao.id !== id));
+    } catch (error) {
+      console.error('Erro ao excluir requisição:', error);
+    }
+  };
+
   const requisicoesFiltradas = requisicoes.filter((requisicao) =>
     requisicao.produto.toLowerCase().includes(filtro.toLowerCase())
   );
@@ -55,12 +76,13 @@ const ListRequisicao = () => {
     <StyledContainer>
       <Titulo>Lista de Requisições</Titulo>
 
-      <Box display="flex" justifyContent="space-between" width="50%" maxWidth="800px" mb={2}>
+      <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={2}>
         <TextField
           label="Filtrar por Produto"
           variant="outlined"
           value={filtro}
           onChange={handleFiltroChange}
+          fullWidth
         />
       </Box>
 
@@ -91,22 +113,34 @@ const ListRequisicao = () => {
                 <TableCell>{requisicao.quantidade}</TableCell>
                 <TableCell>{requisicao.valorTotal}</TableCell>
                 <TableCell>
-                  <Button 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={() => handleAprovar(requisicao.id)}
-                  >
-                    <ThumbUpIcon />
-                  </Button>
-                  
-                  <Button 
-                    variant="contained" 
-                    color="error" 
-                    onClick={() => handleRejeitar(requisicao.id)}
-                    style={{ marginLeft: '0.5rem' }}
-                  >
-                    <ThumbDownIcon />
-                  </Button>
+                  <Box display="flex" flexDirection="row" alignItems="center" gap={2}>
+                    <StyledButton
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleAprovar(requisicao.id)}
+                    >
+                      <ThumbUpIcon />
+                      Aprovar
+                    </StyledButton>
+
+                    <StyledButton
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleRejeitar(requisicao.id)}
+                    >
+                      <ThumbDownIcon />
+                      Rejeitar
+                    </StyledButton>
+
+                    <StyledButton
+                      variant="contained"
+                      color="warning"
+                      onClick={() => handleExcluir(requisicao.id)}
+                    >
+                      <DeleteIcon />
+                      Excluir
+                    </StyledButton>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))}

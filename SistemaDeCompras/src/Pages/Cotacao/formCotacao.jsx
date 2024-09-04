@@ -34,7 +34,7 @@ const StyledButtons = styled.div`
   width: 100%;
 `;
 
-const FormCotacoes = ({ cotacoes, setCotacoes }) => {
+const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
   const [data, setData] = useState('');
   const [preco, setPreco] = useState('');
   const [produto, setProduto] = useState('');
@@ -43,32 +43,39 @@ const FormCotacoes = ({ cotacoes, setCotacoes }) => {
   const [valorTotal, setValorTotal] = useState('');
   const [produtos, setProdutos] = useState([]);
   const [fornecedores, setFornecedores] = useState([]);
+  const [usuario, setUsuario] = useState('');
 
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchProdutosEFornecedores = async () => {
+    const fetchDados = async () => {
       const produtosData = await getProdutosFromFirebase();
       const fornecedoresData = await getFornecedoresFromFirebase();
       setProdutos(produtosData);
       setFornecedores(fornecedoresData);
+
+      // Carrega as cotações e preenche os campos ao editar
+      if (id) {
+        const cotacoesData = await getCotacoesFromFirebase();
+        const cotacaoToEdit = cotacoesData.find((cotacao) => cotacao.id === id);
+        if (cotacaoToEdit) {
+          setData(cotacaoToEdit.data);
+          setPreco(cotacaoToEdit.preco);
+          setProduto(cotacaoToEdit.produto);
+          setFornecedor(cotacaoToEdit.fornecedor);
+          setQuantidade(cotacaoToEdit.quantidade || '');
+          setValorTotal(cotacaoToEdit.valorTotal || '');
+          setUsuario(cotacaoToEdit.usuario);
+        }
+      } else {
+        const usuarioLogado = localStorage.getItem('authToken');
+        setUsuario(usuarioLogado);
+      }
     };
 
-    fetchProdutosEFornecedores();
-
-    if (id) {
-      const cotacaoToEdit = cotacoes.find((cotacao) => cotacao.id === id);
-      if (cotacaoToEdit) {
-        setData(cotacaoToEdit.data);
-        setPreco(cotacaoToEdit.preco);
-        setProduto(cotacaoToEdit.produto); 
-        setFornecedor(cotacaoToEdit.fornecedor);
-        setQuantidade(cotacaoToEdit.quantidade || '');
-        setValorTotal(cotacaoToEdit.valorTotal || '');
-      }
-    }
-  }, [id, cotacoes]);
+    fetchDados();
+  }, [id]);
 
   useEffect(() => {
     if (produto) {
@@ -89,8 +96,16 @@ const FormCotacoes = ({ cotacoes, setCotacoes }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (data && preco && produto && fornecedor && quantidade && valorTotal) {
-      const cotacaoData = { data, preco, produto, fornecedor, quantidade, valorTotal };
+    if (data && preco && produto && fornecedor && quantidade && valorTotal && usuario) {
+      const cotacaoData = {
+        data,
+        preco,
+        produto,
+        fornecedor,
+        quantidade,
+        valorTotal,
+        usuario
+      };
 
       try {
         if (id) {
@@ -122,7 +137,15 @@ const FormCotacoes = ({ cotacoes, setCotacoes }) => {
       </Typography>
       
       <Form onSubmit={handleSubmit}>
-        
+        <TextField
+          label="Usuário"
+          variant="outlined"
+          margin="normal"
+          fullWidth
+          value={usuario}
+          InputProps={{ readOnly: true }}
+        />
+
         <TextField
           label="Data"
           type="date"

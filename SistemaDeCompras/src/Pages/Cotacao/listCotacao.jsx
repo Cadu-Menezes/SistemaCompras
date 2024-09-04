@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { getCotacoesFromFirebase, deleteCotacaoFromFirebase } from '../../Utils/cotacoesService';
+import {  getCotacoesDoUsuario, getCotacoesFromFirebase, deleteCotacaoFromFirebase } from '../../Utils/cotacoesService';
 import { addRequisicaoToFirebase } from '../../Utils/requisicaoService';
 
 const StyledContainer = styled('div')({
@@ -29,7 +29,10 @@ const ListCotacao = () => {
 
   useEffect(() => {
     const fetchCotacoes = async () => {
-      const cotacoesFromFirebase = await getCotacoesFromFirebase();
+      
+      const usuarioLogado = localStorage.getItem('authToken');
+
+      const cotacoesFromFirebase = await getCotacoesDoUsuario(usuarioLogado);
       setCotacoes(cotacoesFromFirebase);
     };
 
