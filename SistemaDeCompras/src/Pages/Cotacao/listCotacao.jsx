@@ -3,7 +3,7 @@ import { styled } from '@mui/system';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Box, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import {  getCotacoesDoUsuario, getCotacoesFromFirebase, deleteCotacaoFromFirebase } from '../../Utils/cotacoesService';
+import { getCotacoesDoUsuario, deleteCotacaoFromFirebase } from '../../Utils/cotacoesService';
 import { addRequisicaoToFirebase } from '../../Utils/requisicaoService';
 
 const StyledContainer = styled('div')({
@@ -18,8 +18,8 @@ const Titulo = styled('h1')({});
 const StyledTableContainer = styled(TableContainer)({
   marginTop: '2rem',
   width: '100%',
-  maxWidth: '1200px', 
-  overflowX: 'auto', 
+  maxWidth: '1200px',
+  overflowX: 'auto',
 });
 
 const ListCotacao = () => {
@@ -29,9 +29,7 @@ const ListCotacao = () => {
 
   useEffect(() => {
     const fetchCotacoes = async () => {
-      
       const usuarioLogado = localStorage.getItem('authToken');
-
       const cotacoesFromFirebase = await getCotacoesDoUsuario(usuarioLogado);
       setCotacoes(cotacoesFromFirebase);
     };
@@ -54,17 +52,17 @@ const ListCotacao = () => {
 
   const handleSolicitarRequisicao = async (cotacao) => {
     try {
-      console.log('Solicitando requisição para a cotação:', cotacao);
+      console.log('Solicitando cotação para a requisição:', cotacao);
       await addRequisicaoToFirebase(cotacao);
-      alert('Requisição solicitada com sucesso!');
+      alert('Cotação solicitada com sucesso!');
     } catch (error) {
-      console.error('Erro ao solicitar requisição:', error);
+      console.error('Erro ao solicitar cotação:', error);
     }
   };
 
   return (
     <StyledContainer>
-      <Titulo>Cadastro de Cotação</Titulo>
+      <Titulo>Cadastro de Requisição</Titulo>
 
       <Box display="flex" justifyContent="space-between" width="50%" maxWidth="800px" mb={2}>
         <TextField
@@ -84,44 +82,36 @@ const ListCotacao = () => {
             <TableRow>
               <TableCell>ID</TableCell>
               <TableCell>Data</TableCell>
-              <TableCell>Preço</TableCell>
+              <TableCell>Descrição</TableCell>
               <TableCell>Produto</TableCell>
-              <TableCell>Fornecedor</TableCell>
               <TableCell>Quantidade</TableCell>
-              <TableCell>Valor Total</TableCell>
-              <TableCell>Ações</TableCell> 
+              <TableCell>Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {cotacoesFiltradas.map((cotacao) => (
               <TableRow key={cotacao.id}>
-                
                 <TableCell>{cotacao.id}</TableCell>
                 <TableCell>{format(new Date(cotacao.data), 'dd/MM/yyyy')}</TableCell>
-                <TableCell>{cotacao.preco}</TableCell>
+                <TableCell>{cotacao.descricao}</TableCell>
                 <TableCell>{cotacao.produto}</TableCell>
-                <TableCell>{cotacao.fornecedor}</TableCell>
                 <TableCell>{cotacao.quantidade}</TableCell>
-                <TableCell>{cotacao.valorTotal}</TableCell>
-                
                 <TableCell>
-                  
                   <Box
                     display="flex"
                     flexDirection="row"
                     justifyContent="flex-start"
                     alignItems="center"
-                    gap={1} 
+                    gap={1}
                     flexWrap="wrap"
                   >
-
                     <Button
                       variant="contained"
                       color="secondary"
                       onClick={() => navigate(`/cotacao/editar/${cotacao.id}`)}
-                      sx={{ 
-                        minWidth: '100px', 
-                        fontSize: { xs: '0.75rem', sm: '1rem' }, 
+                      sx={{
+                        minWidth: '100px',
+                        fontSize: { xs: '0.75rem', sm: '1rem' },
                       }}
                     >
                       Editar
@@ -131,9 +121,9 @@ const ListCotacao = () => {
                       variant="contained"
                       color="error"
                       onClick={() => handleDelete(cotacao.id)}
-                      sx={{ 
+                      sx={{
                         minWidth: '100px',
-                        fontSize: { xs: '0.75rem', sm: '1rem' }, 
+                        fontSize: { xs: '0.75rem', sm: '1rem' },
                       }}
                     >
                       Excluir
@@ -143,18 +133,16 @@ const ListCotacao = () => {
                       variant="contained"
                       color="primary"
                       onClick={() => handleSolicitarRequisicao(cotacao)}
-                      sx={{ 
+                      sx={{
                         minWidth: '100px',
-                        fontSize: { xs: '0.75rem', sm: '1rem' }, 
+                        fontSize: { xs: '0.75rem', sm: '1rem' },
                       }}
                     >
-                      Solicitar Requisição
+                      Solicitar Cotação
                     </Button>
                   
                   </Box>
-
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>

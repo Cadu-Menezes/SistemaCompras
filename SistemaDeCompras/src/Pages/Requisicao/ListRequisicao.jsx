@@ -74,7 +74,7 @@ const ListRequisicao = () => {
 
   return (
     <StyledContainer>
-      <Titulo>Lista de Requisições</Titulo>
+      <Titulo>Lista de Cotações</Titulo>
 
       <Box display="flex" justifyContent="space-between" width="100%" maxWidth="800px" mb={2}>
         <TextField

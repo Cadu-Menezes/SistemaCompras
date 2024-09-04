@@ -54,27 +54,12 @@ const Button = styled.button`
 `;
 
 const Home = () => {
-  const [advice, setAdvice] = useState("");
 
-  const fetchAdvice = async () => {
-    try {
-      const response = await fetch("https://api.adviceslip.com/advice");
-      const data = await response.json();
-      setAdvice(data.slip.advice);
-    } catch (error) {
-      console.error("Erro ao buscar conselho:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchAdvice(); // Fetches an initial advice on component mount
-  }, []);
 
   return (
     <StyledHome>
-      <Title>Projeto do caduzinho!</Title>
-      <Text>{advice}</Text>
-      <Button onClick={fetchAdvice}>Gerar Novo Conselho</Button>
+      <Title>Empresa ACME</Title>
+      <Text>Sistema de Compras</Text>
     </StyledHome>
   );
 };

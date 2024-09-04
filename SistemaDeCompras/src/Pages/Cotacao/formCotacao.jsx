@@ -4,7 +4,6 @@ import { TextField, Button, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { addCotacaoToFirebase, getCotacoesFromFirebase, updateCotacaoInFirebase } from '../../Utils/cotacoesService';
 import { getProdutosFromFirebase } from '../../Utils/cadastroProdutos';
-import { getFornecedoresFromFirebase } from '../../Utils/fornecedoresService';
 
 const FormContainer = styled.div`
   margin-left: 30%;
@@ -36,13 +35,10 @@ const StyledButtons = styled.div`
 
 const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
   const [data, setData] = useState('');
-  const [preco, setPreco] = useState('');
+  const [descricao, setDescricao] = useState('');
   const [produto, setProduto] = useState('');
-  const [fornecedor, setFornecedor] = useState('');
   const [quantidade, setQuantidade] = useState('');
-  const [valorTotal, setValorTotal] = useState('');
   const [produtos, setProdutos] = useState([]);
-  const [fornecedores, setFornecedores] = useState([]);
   const [usuario, setUsuario] = useState('');
 
   const navigate = useNavigate();
@@ -51,9 +47,7 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
   useEffect(() => {
     const fetchDados = async () => {
       const produtosData = await getProdutosFromFirebase();
-      const fornecedoresData = await getFornecedoresFromFirebase();
       setProdutos(produtosData);
-      setFornecedores(fornecedoresData);
 
       // Carrega as cotações e preenche os campos ao editar
       if (id) {
@@ -61,11 +55,9 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
         const cotacaoToEdit = cotacoesData.find((cotacao) => cotacao.id === id);
         if (cotacaoToEdit) {
           setData(cotacaoToEdit.data);
-          setPreco(cotacaoToEdit.preco);
+          setDescricao(cotacaoToEdit.descricao);
           setProduto(cotacaoToEdit.produto);
-          setFornecedor(cotacaoToEdit.fornecedor);
           setQuantidade(cotacaoToEdit.quantidade || '');
-          setValorTotal(cotacaoToEdit.valorTotal || '');
           setUsuario(cotacaoToEdit.usuario);
         }
       } else {
@@ -77,33 +69,15 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
     fetchDados();
   }, [id]);
 
-  useEffect(() => {
-    if (produto) {
-      const produtoSelecionado = produtos.find((p) => p.Nome === produto);
-      if (produtoSelecionado) {
-        setPreco(produtoSelecionado.Preco);
-        setValorTotal(quantidade * produtoSelecionado.Preco);
-      }
-    }
-  }, [produto, produtos, quantidade]);
-
-  useEffect(() => {
-    if (preco && quantidade) {
-      setValorTotal(preco * quantidade);
-    }
-  }, [preco, quantidade]);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (data && preco && produto && fornecedor && quantidade && valorTotal && usuario) {
+    if (data && descricao && produto && quantidade && usuario) {
       const cotacaoData = {
         data,
-        preco,
+        descricao,
         produto,
-        fornecedor,
         quantidade,
-        valorTotal,
         usuario
       };
 
@@ -175,30 +149,13 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
         </TextField>
 
         <TextField
-          label="Preço"
+          label="Descrição"
           variant="outlined"
           margin="normal"
           fullWidth
-          value={preco}
-          InputProps={{ readOnly: true }}
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
         />
-
-        <TextField
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          select
-          value={fornecedor}
-          onChange={(e) => setFornecedor(e.target.value)}
-          SelectProps={{
-            native: true,
-          }}
-        >
-          <option value="">Selecione um fornecedor</option>
-          {fornecedores.map((fornecedor) => (
-            <option key={fornecedor.id} value={fornecedor.Nome}>{fornecedor.Nome}</option>
-          ))}
-        </TextField>
 
         <TextField
           label="Quantidade"
@@ -206,23 +163,8 @@ const FormCotacoes = ({ cotacoes = [], setCotacoes }) => {
           margin="normal"
           fullWidth
           value={quantidade}
-          onChange={(e) => {
-            const novaQuantidade = e.target.value;
-            setQuantidade(novaQuantidade);
-            if (preco) {
-              setValorTotal(novaQuantidade * preco);
-            }
-          }}
+          onChange={(e) => setQuantidade(e.target.value)}
           type="number"
-        />
-
-        <TextField
-          label="Valor Total"
-          variant="outlined"
-          margin="normal"
-          fullWidth
-          value={valorTotal}
-          InputProps={{ readOnly: true }}
         />
 
         <StyledButtons>
