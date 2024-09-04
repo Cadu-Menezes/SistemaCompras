@@ -69,20 +69,20 @@ const CotacaoModal = ({ open, onClose, pedido }) => {
           
       // Atualiza o status do pedido com base no número de cotações
       const cotaçõesExistentes = await getCotaçõesPorPedido(pedido.id);
-      const numeroCotações = cotaçõesExistentes.length + 1; // Inclui a nova cotação
+      const numeroCotações = cotaçõesExistentes.length; 
       
       if (numeroCotações < 3) {
-        // Adiciona a nova cotação
+        // Adiciona a nova cotação se o numero de cotações para aquele pedido for menor que 3
         await addCotacaoToFirebase(cotacao);
       }
 
-      if (numeroCotações === 2) {
+      if (numeroCotações === 0) {
         // Atualiza o status para "em cotação" se for a primeira cotação
         await updatePedidoStatus(pedido.id, 'em cotacao');
-      } else if (numeroCotações === 4) {
+      } else if (numeroCotações === 2) {
         // Atualiza o status para "cotada" se for a terceira cotação
         await updatePedidoStatus(pedido.id, 'cotada');
-      } else if (numeroCotações > 3) {
+      } else if (numeroCotações > 2) {
         // Caso o número de cotações exceda 3, exibe uma mensagem ou desativa a funcionalidade
         alert('Não é possível cadastrar mais de 3 cotações para este pedido.');
         return;
