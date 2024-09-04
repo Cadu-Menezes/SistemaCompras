@@ -24,9 +24,7 @@ const ListFornecedores = () => {
   const navigate = useNavigate();
 
   const fetchFornecedores = async () => {
-    console.log('Buscando fornecedores...');
     const fornecedores = await getFornecedoresFromFirebase();
-    console.log('Fornecedores obtidos:', fornecedores);
     setFornecedores(fornecedores);
   };
 

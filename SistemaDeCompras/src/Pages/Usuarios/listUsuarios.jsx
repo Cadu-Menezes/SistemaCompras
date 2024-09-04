@@ -24,9 +24,7 @@ const ListUsuarios = () => {
   const navigate = useNavigate(); 
 
   const fetchUsers = async () => {
-    console.log('Buscando usuarios...');
     const usuarios = await getUsuariosFromFirebase();
-    console.log('usuarios obtidos:', usuarios);
     setUsers(usuarios);
   };
 

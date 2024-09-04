@@ -17,36 +17,30 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Função para login
 export const login = async (email, password) => {
     try {
-        // Primeiro, tenta fazer login pelo Firebase Authentication
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        localStorage.setItem('authToken', await user.getIdToken());
+        const token = await user.getIdToken();
+        localStorage.setItem('authToken', token);
         return user;
     } catch (firebaseError) {
         console.error('Erro ao fazer login com Firebase:', firebaseError);
-
-        // Se falhar, tenta fazer login pela tabela de usuários personalizada
         try {
             const usersRef = collection(db, 'usuarios');  
-            console.log("email: ", email);
-            console.log("password: ", password);
             const q = query(usersRef, where("Email", "==", email), where("Senha", "==", password));
             const querySnapshot = await getDocs(q);
-            
             if (!querySnapshot.empty) {
                 const userDoc = querySnapshot.docs[0];
                 const userData = userDoc.data();
-                localStorage.setItem('authToken', userDoc.id); // Salva o ID do usuário como token
-                return userData; // Retorna os dados do usuário
+                localStorage.setItem('authToken', userDoc.id);
+                return userData;
             } else {
                 throw new Error('Usuário não encontrado na tabela usuarios');
             }
         } catch (customAuthError) {
             console.error('Erro ao fazer login pela tabela usuarios:', customAuthError);
-            throw customAuthError;  // Lança o erro para ser capturado no component
+            throw customAuthError;
         }
     }
 };
@@ -65,14 +59,13 @@ export const logout = async () => {
 // Função para verificar sessão
 export const checkAuth = async () => {
     return new Promise((resolve, reject) => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            unsubscribe();
-            if (user) {
-                resolve(user);
-            } else {
-                resolve(null);
-            }
-        }, reject);
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            // Simular verificação do token
+            resolve(true);
+        } else {
+            resolve(null);
+        }
     });
 };
 

@@ -4,8 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Loading from './Components/Loading';
 import NavBar from './Components/NavBar';
 import { checkAuth } from './Utils/AuthUtils'; 
-import ListRequisicao from '../src/Pages/Requisicao/ListRequisicao';
 import Login from './Pages/Login';
+import ListRequisicao from '../src/Pages/Requisicao/ListRequisicao';
 
 const Home = lazy(() => import('./Pages/Home'));
 const ListProdutos = lazy(() => import('./Pages/Produtos/list'));
@@ -29,8 +29,8 @@ function App() {
   useEffect(() => {
     const checkAuthentication = async () => {
       try {
-        const user = await checkAuth();
-        setIsAuthenticated(!!user);
+        const isAuth = await checkAuth();
+        setIsAuthenticated(!!isAuth);
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
       }

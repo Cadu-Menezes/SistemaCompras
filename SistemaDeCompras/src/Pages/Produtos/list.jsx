@@ -24,9 +24,7 @@ const ListProdutos = () => {
   const navigate = useNavigate(); 
 
   const fetchProducts = async () => {
-    console.log('Buscando produtos...');
     const produtos = await getProdutosFromFirebase();
-    console.log('Produtos obtidos:', produtos);
     setProducts(produtos);
   };
 

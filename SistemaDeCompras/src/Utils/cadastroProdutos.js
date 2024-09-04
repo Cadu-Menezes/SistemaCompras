@@ -13,7 +13,6 @@ export const addProdutoToFirebase = async (product) => {
 
 export const getProdutosFromFirebase = async () => {
   try {
-    console.log("Obtendo produtos do Firebase");
     const querySnapshot = await getDocs(collection(db, "Produtos"));
     const produtos = querySnapshot.docs.map(doc => ({
       id: doc.id,
