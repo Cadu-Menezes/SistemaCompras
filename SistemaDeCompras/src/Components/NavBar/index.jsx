@@ -105,7 +105,7 @@ const NavBar = ({ breakpoints, setIsAuthenticated }) => {
 
     return (
         <Nav breakpoints={breakpoints}>
-            <Logo src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYW1Q7NQ7qq8U_HPCxh3SFHKBK-RJC0mKh6Q&s" alt="Logo" />
+            <Logo src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwfv79qIxCLnIFjj8kwU1HxoQWvPEAWvBpZw&s" alt="Logo" />
             <Menu breakpoints={breakpoints}>
                
                 {role === 'admin' && ( 
